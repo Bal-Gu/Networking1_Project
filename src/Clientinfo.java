@@ -4,17 +4,28 @@ import java.util.Objects;
 
 public class Clientinfo {
     private final InetAddress address;
-    private final int order;
     private ArrayList<Clientinfo> peers;
     private ArrayList<String> messages;
-
-    public Clientinfo(InetAddress a , int order){
+    private String username = "";
+    public Clientinfo(InetAddress a){
         this.address = a;
-        this.order = order;
     }
 
-    public int getOrder() {
-        return order;
+    public String getUsername() {
+        return username;
+    }
+
+    public void removeFromPeers(){
+        if (peers == null){
+            return;
+        }
+        for(Clientinfo c : peers){
+            peers.remove(this);
+        }
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public InetAddress getAddress() {

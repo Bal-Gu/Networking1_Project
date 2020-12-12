@@ -8,6 +8,7 @@ public class CentralizedServer{
     private DatagramSocket socket;
     private final int port = 2077;
     private byte[] buffer = new byte[ 2048 ];
+    private DatagramPacket packet;
     private ArrayList<Clientinfo> clientinfoList = new ArrayList<>();
     private Semaphore s = new Semaphore(1);
 
@@ -35,7 +36,7 @@ public class CentralizedServer{
         }
         while(true){
             try{
-                DatagramPacket packet =  new DatagramPacket(buffer,buffer.length);
+                this.packet =  new DatagramPacket(buffer,buffer.length);
                 socket.receive(packet);
                 Server_thread s = new Server_thread(this);
                 s.run();
@@ -46,5 +47,7 @@ public class CentralizedServer{
         }
     }
 
-
+    public DatagramPacket getPacket() {
+        return packet;
+    }
 }
