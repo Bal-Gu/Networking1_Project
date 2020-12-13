@@ -11,7 +11,8 @@ public class Clientinit {
     public Clientinit() throws SocketException, UnknownHostException {
         socket = new DatagramSocket();
         serveraddress = InetAddress.getByName("localhost");
-        this.c = new Clientinfo(socket.getLocalAddress()) ;
+        this.c = new Clientinfo(socket.getLocalAddress(), port) ;
+        c.setSocket(socket);
         new ClientconnectWindow(this);
 
     }
