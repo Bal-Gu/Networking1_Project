@@ -15,6 +15,14 @@ public class Clientinfo {
     private String username = "";
     private DatagramSocket socket;
 
+    public int getPort() {
+        return port;
+    }
+
+    public ArrayList<Clientinfo> getPeers() {
+        return peers;
+    }
+
     public void setSocket(DatagramSocket socket) {
         this.socket = socket;
     }
@@ -49,7 +57,9 @@ public class Clientinfo {
 
         StringBuilder message = new StringBuilder("");
         for (Clientinfo c : clientinfoList) {
-
+            if(socket  == null){
+                return;
+            }
             Arrays.fill(buffer, (byte) 0);
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length, c.address, c.port);
             String sending = "ready";
@@ -104,7 +114,7 @@ public class Clientinfo {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Clientinfo clientinfo = (Clientinfo) o;
-        return address.equals(clientinfo.address) && this.port == clientinfo.port && this.username.equals(clientinfo.username);
+        return address.equals(clientinfo.address) && this.port == clientinfo.port ;
     }
 
 

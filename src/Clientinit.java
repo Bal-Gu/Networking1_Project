@@ -13,6 +13,7 @@ public class Clientinit {
         serveraddress = InetAddress.getByName("localhost");
         this.c = new Clientinfo(socket.getLocalAddress(), port) ;
         c.setSocket(socket);
+        socket.setSoTimeout(1000);
         new ClientconnectWindow(this);
 
     }
