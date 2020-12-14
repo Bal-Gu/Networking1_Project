@@ -6,11 +6,13 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Clientinfo {
     private final InetAddress address;
     private final int port;
-    private ArrayList<Clientinfo> peers;
+    private ArrayList<Clientinfo> peers = new ArrayList<>();
     private ArrayList<String> messages;
     private String username = "";
     private DatagramSocket socket;
@@ -57,14 +59,14 @@ public class Clientinfo {
 
         StringBuilder message = new StringBuilder("");
         for (Clientinfo c : clientinfoList) {
-            if(socket  == null){
-                return;
+            if(c.getSocket()  == null){
+                continue;
             }
             Arrays.fill(buffer, (byte) 0);
-            DatagramPacket packet = new DatagramPacket(buffer, buffer.length, c.address, c.port);
             String sending = "ready";
             buffer = sending.getBytes();
-            socket.send(packet);
+            DatagramPacket packet = new DatagramPacket(buffer, buffer.length, c.address, c.port);
+            c.getSocket().send(packet);
 
         }
         for (Clientinfo c1 : clientinfoList) {
@@ -81,22 +83,26 @@ public class Clientinfo {
         }
         for (Clientinfo c : clientinfoList) {
             Arrays.fill(buffer, (byte) 0);
-            DatagramPacket packet = new DatagramPacket(buffer, buffer.length, c.address, c.port);
             buffer = message.toString().getBytes();
-            socket.send(packet);
+            DatagramPacket packet = new DatagramPacket(buffer, buffer.length, c.address, c.port);
+            c.getSocket().send(packet);
 
         }
     }
 
     public void readyparseMessage(String message) throws UnknownHostException {
         String[] ClientAmount = message.split("\n");
-        peers.clear();
         for (String s : ClientAmount) {
             String[] params = s.split(";");
-            Clientinfo clinfo = new Clientinfo(InetAddress.getByAddress(params[1].getBytes()), Integer.parseInt(params[2]));
-            clinfo.setUsername(params[0]);
-            if(!this.equals(clinfo)){
-                peers.add(clinfo);
+            Pattern ipWithRegex = Pattern.compile("[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}");
+            Matcher m = ipWithRegex.matcher(s);
+            if(m.find()) {
+                Clientinfo clinfo = new Clientinfo(InetAddress.getByName(m.group(0)), Integer.parseInt(params[2]));
+
+                clinfo.setUsername(params[0]);
+                if (!this.equals(clinfo)) {
+                    peers.add(clinfo);
+                }
             }
         }
     }
