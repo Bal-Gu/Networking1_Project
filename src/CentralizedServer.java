@@ -38,6 +38,7 @@ public class CentralizedServer{
         while(true){
             try{
                 this.packet =  new DatagramPacket(buffer,buffer.length);
+                socket.setSoTimeout(10000000);
                 socket.receive(packet);
                 Server_thread s = new Server_thread(this);
                 s.run();

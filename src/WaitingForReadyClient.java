@@ -1,3 +1,5 @@
+import jdk.jfr.StackTrace;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -80,6 +82,15 @@ public class WaitingForReadyClient implements Runnable {
             }
             String res = new String(data.getData(), 0, data.getLength());
             if (res.equals("ready")) {
+
+                String sending = "handshake";
+                buffer = sending.getBytes();
+                data = new DatagramPacket(buffer, buffer.length, clientinit.getServeraddress(), clientinit.getPort());
+                try {
+                    clientinit.getSocket().send(data);
+                } catch (IOException ioException){
+                    ioException.printStackTrace();
+                }
                 break;
             }
             else if (res.isEmpty()){
@@ -93,7 +104,7 @@ public class WaitingForReadyClient implements Runnable {
 
         }
         //flush the buffer
-        Arrays.fill(buffer, (byte) 0);
+        buffer = new byte[2024];
         System.out.println("Ready message got");
         //wait for the information about the participants
         data = new DatagramPacket(buffer, buffer.length);
@@ -103,6 +114,7 @@ public class WaitingForReadyClient implements Runnable {
             for(Clientinfo client:clientinit.getC().getPeers()){
                 System.out.println("Recieved "+ client.getUsername());
             }
+            clientconnectWindow.readyb.setText("Currently: " + clientinit.getC().getPeers().size() + " participant");
         } catch (IOException e) {
             e.printStackTrace();
         }

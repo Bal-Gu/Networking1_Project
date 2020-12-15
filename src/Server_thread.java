@@ -58,9 +58,9 @@ public class Server_thread implements Runnable {
             if (server.getClientList().size() >= 3) {
                 try {
                     Clientinfo cl = new Clientinfo(address, port);
-                    cl.sendAllClientsInfoToClient(server.getClientList());
+                    cl.sendAllClientsInfoToClient(server);
                     System.out.println("Server has sended data.");
-                } catch (IOException e) {
+                } catch (IOException | InterruptedException e) {
                     e.printStackTrace();
                 }
             }
