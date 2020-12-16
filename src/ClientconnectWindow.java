@@ -1,9 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.net.DatagramPacket;
-import java.util.Arrays;
 
 public class ClientconnectWindow extends JFrame {
     JButton b;
@@ -13,6 +13,7 @@ public class ClientconnectWindow extends JFrame {
         b = new JButton("join group");
         readyb = new JButton("Currently: 0 participant");
         JTextField textArea = new JTextField("Give us your username");
+        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setResizable(false);
         this.setSize(400, 400);
         readyb.setBounds(0,0,400,100);//TODO FIX THIS
@@ -26,18 +27,15 @@ public class ClientconnectWindow extends JFrame {
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
         WaitingForReadyClient wfrc = new WaitingForReadyClient(ClientconnectWindow.this,cl);
-        readyb.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String sending = "launch";
-                byte[] buffer = new byte[1028];
-                buffer = sending.getBytes();
-                DatagramPacket data = new DatagramPacket(buffer, buffer.length, cl.getServeraddress(), cl.getPort());
-                try {
-                    cl.getSocket().send(data);
-                } catch (IOException ioException) {
-                    ioException.printStackTrace();
-                }
+        readyb.addActionListener(e -> {
+            String sending = "launch";
+            byte[] buffer;
+            buffer = sending.getBytes();
+            DatagramPacket data = new DatagramPacket(buffer, buffer.length, cl.getServeraddress(), cl.getPort());
+            try {
+                cl.getSocket().send(data);
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
             }
         });
         this.addWindowListener(new WindowAdapter() {
@@ -57,25 +55,21 @@ public class ClientconnectWindow extends JFrame {
 
             }
         });
-        b.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        b.addActionListener(e -> {
 
-                cl.getC().setUsername(textArea.getText().replace("\n", " "));
-                byte[] buffer;
-                try {
-                    String sending = "join " + cl.getC().getUsername();
-                    buffer = sending.getBytes();
-                    DatagramPacket data = new DatagramPacket(buffer, buffer.length, cl.getServeraddress(), cl.getPort());
-                    cl.getSocket().send(data);
-                    b.setText("Welcome " + cl.getC().getUsername());
-                    WaitingForReadyClient wfrc = new WaitingForReadyClient(ClientconnectWindow.this,cl);
-                    new Thread(wfrc).start();
-                    return;
+            cl.getC().setUsername(textArea.getText().replace("\n", " "));
+            byte[] buffer;
+            try {
+                String sending = "join " + cl.getC().getUsername();
+                buffer = sending.getBytes();
+                DatagramPacket data = new DatagramPacket(buffer, buffer.length, cl.getServeraddress(), cl.getPort());
+                cl.getSocket().send(data);
+                b.setText("Welcome " + cl.getC().getUsername());
+                WaitingForReadyClient wfrc1 = new WaitingForReadyClient(ClientconnectWindow.this,cl);
+                new Thread(wfrc1).start();
 
-                } catch (IOException ioException) {
-                    ioException.printStackTrace();
-                }
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
             }
         });
     }

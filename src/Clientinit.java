@@ -5,9 +5,9 @@ import java.net.UnknownHostException;
 
 public class Clientinit {
     private final DatagramSocket socket;
-    private Clientinfo c;
-    private int port = 2077;
-    private InetAddress serveraddress;
+    private final Clientinfo c;
+    private final int port = 2077;
+    private final InetAddress serveraddress;
     public Clientinit() throws SocketException, UnknownHostException {
         socket = new DatagramSocket();
         serveraddress = InetAddress.getByName("localhost");

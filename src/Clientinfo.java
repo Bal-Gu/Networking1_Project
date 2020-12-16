@@ -12,6 +12,15 @@ public class Clientinfo {
     private ArrayList<String> messages;
     private String username = "";
     private DatagramSocket socket;
+    private boolean connected = true;
+
+    public boolean isConnected() {
+        return connected;
+    }
+
+    public void setConnected(boolean connected) {
+        this.connected = connected;
+    }
 
     public int getPort() {
         return port;
