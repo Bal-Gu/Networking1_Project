@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.border.CompoundBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,7 +25,7 @@ public class P2P_Window extends JFrame {
         GridBagConstraints c = new GridBagConstraints();
         leftPanel = new JPanel();
         GridBagLayout gridleft = new GridBagLayout();
-        MiddlePanel = new JPanel();
+        MiddlePanel = new JPanel(new GridLayout(0, 1));
         updateUsername(MiddlePanel);
         MessagePane = new JScrollPane(MiddlePanel);
         MessagePane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -138,6 +139,7 @@ public class P2P_Window extends JFrame {
     }
 
     public void updateUsername(JPanel p){
+
         p.setVisible(true);
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
@@ -146,6 +148,11 @@ public class P2P_Window extends JFrame {
         {
             c.gridx = i;
             JLabel label = new JLabel("Label " + i);
+            label.setBorder(new CompoundBorder( // sets two borders
+                    BorderFactory.createMatteBorder(5, 5, 5, 5, Color.GRAY), // outer border
+                    BorderFactory.createEmptyBorder(5, 5, 5, 5)
+            ));
+
             p.add(label,c);
         }
     }
