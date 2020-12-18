@@ -43,6 +43,19 @@ public class Clientinfo {
         this.port = port;
     }
 
+    public Clientinfo searchpeers(InetAddress a, int port) {
+        Clientinfo tempClient = new Clientinfo(a, port);
+        int index = 0;
+        while (peers.get(index) != null) {
+            if (peers.get(index).equals(tempClient)) {
+                return peers.get(index);
+            }
+            index++;
+
+        }
+        return null;
+    }
+
     public String getUsername() {
         return username;
     }
@@ -78,7 +91,7 @@ public class Clientinfo {
             packet = new DatagramPacket(buffer, buffer.length);
             c.getSocket().setSoTimeout(2000);
             try {
-                System.out.println("Server waiting for handshake from "+c.getUsername());
+                System.out.println("Server waiting for handshake from " + c.getUsername());
                 c.getSocket().receive(packet);
                 String s = new String(packet.getData(), 0, packet.getLength());
 
@@ -90,7 +103,7 @@ public class Clientinfo {
                 }
                 System.out.println("Server recieved hadshake");
             } catch (SocketTimeoutException e) {
-                System.out.println("Handshake  Timeout for "+c.getUsername());
+                System.out.println("Handshake  Timeout for " + c.getUsername());
                 cl.add(c);
             }
 
@@ -98,9 +111,9 @@ public class Clientinfo {
         }
         ArrayList<Clientinfo> dupcheck = new ArrayList<>();
         for (Clientinfo c : cs.getClientList()) {
-            if(dupcheck.contains(c)){
+            if (dupcheck.contains(c)) {
                 cl.add(c);
-            }else{
+            } else {
                 dupcheck.add(c);
             }
         }

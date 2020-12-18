@@ -26,13 +26,13 @@ public class P2P_Window extends JFrame {
         leftPanel = new JPanel();
         GridBagLayout gridleft = new GridBagLayout();
         MiddlePanel = new JPanel(new GridLayout(0, 1));
-        updateUsername(MiddlePanel);
+        messagesUpdate(MiddlePanel);
         MessagePane = new JScrollPane(MiddlePanel);
         MessagePane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         MessagePane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
 
-        RightPanel = new JPanel();
+        RightPanel = new JPanel(new GridLayout(0, 1));
         updateUsername(RightPanel);
         UsernamePane = new JScrollPane(RightPanel);
         UsernamePane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -61,7 +61,7 @@ public class P2P_Window extends JFrame {
         c.fill = GridBagConstraints.CENTER;
         c.gridx = 0;
         c.gridy = 0;
-        c.weightx = 0.2;
+        c.weightx = 0.05;
         c.gridwidth = 3;
         c.gridheight = 1;
         leftPanel.setLayout(gridleft);
@@ -80,7 +80,6 @@ public class P2P_Window extends JFrame {
         leftPanel.add(connectedButton, c);
         connectedButton.setVisible(true);
         connected();
-
 
 
         //sets the ButtonListener
@@ -104,10 +103,6 @@ public class P2P_Window extends JFrame {
             }
         });
 
-        for (int i = 0; i < 200; i++) {
-
-            RightPanel.add(new JLabel("Fuck"));
-        }
         this.setVisible(true);
     }
 
@@ -138,14 +133,13 @@ public class P2P_Window extends JFrame {
         connected();
     }
 
-    public void updateUsername(JPanel p){
+    public void messagesUpdate(JPanel p) {
 
         p.setVisible(true);
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.CENTER;
-        for (int i = 0; i < 100; i++)
-        {
+        for (int i = 0; i < 100; i++) {
             c.gridx = i;
             JLabel label = new JLabel("Label " + i);
             label.setBorder(new CompoundBorder( // sets two borders
@@ -153,8 +147,28 @@ public class P2P_Window extends JFrame {
                     BorderFactory.createEmptyBorder(5, 5, 5, 5)
             ));
 
-            p.add(label,c);
+            p.add(label, c);
         }
+    }
+
+
+    public void updateUsername(JPanel p) {
+
+        p.setVisible(true);
+        setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.CENTER;
+        for (int i = 0; i < clientinfo.getPeers().size(); i++) {
+            c.gridx = i;
+            JLabel label = new JLabel(clientinfo.getPeers().get(i).getUsername());
+            label.setFont(new Font(Font.MONOSPACED, Font.ITALIC, 30));
+            label.setForeground(clientinfo.getPeers().get(i).isConnected() ? new Color(11, 102, 35) : new Color(128, 0, 0));
+            label.setBorder(new CompoundBorder( // sets two borders
+            ));
+
+            p.add(label, c);
+        }
+
     }
     //TODO files send should be on another thread such that it doesn't block the GUI
     //TODO long messages should be on another thread such that it doens't block the GUI
