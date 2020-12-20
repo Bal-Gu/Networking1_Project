@@ -13,6 +13,7 @@ public class SendingThread implements Runnable {
     private final Semaphore s = new Semaphore(1);
     private DatagramSocket socket;
     private final boolean isMessage;
+    private boolean emergencyExit = false;
     private final Clientinfo clientinfo;
     private final String filename;
 
@@ -23,6 +24,7 @@ public class SendingThread implements Runnable {
         this.filename = "";
         MessagesToPackets(message);
 
+
     }
 
     public SendingThread(File file, DatagramSocket socket, Clientinfo Tosendclientinfo) throws IOException {
@@ -31,6 +33,10 @@ public class SendingThread implements Runnable {
         this.isMessage = false;
         this.filename = file.getName();
         FileToPackets(file);
+    }
+
+    public void earlyExit(){
+        emergencyExit = true;
     }
 
     @Override
@@ -70,9 +76,17 @@ public class SendingThread implements Runnable {
         } catch (SocketException e) {
             e.printStackTrace();
         }
-        //While not all packets are marked as recieved send each packet.
+
+        //Start new listening thread
+        AcknowledgmentThread acknowledgmentThread = new AcknowledgmentThread(this);
+        acknowledgmentThread.run();
+        //While not all packets are marked as received send each packet.
 
         while (true) {
+            if(emergencyExit){
+                socket.close();
+                return;
+            }
             try {
                 if (!isnull()) break;
             } catch (InterruptedException e) {
@@ -115,7 +129,7 @@ public class SendingThread implements Runnable {
             }
         }
 
-        //Send END to the recieved port
+        //Send END to the received port
         sending = "END";
         buffer = sending.getBytes();
         DatagramPacket packetToSend = new DatagramPacket(buffer, buffer.length,packet.getAddress(),packet.getPort());
@@ -124,7 +138,16 @@ public class SendingThread implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        acknowledgmentThread.ending = true ;
 
+    }
+
+    public boolean isMessage() {
+        return isMessage;
+    }
+
+    public String getFilename() {
+        return filename;
     }
 
     public void remove(int index) throws InterruptedException {
@@ -166,4 +189,9 @@ public class SendingThread implements Runnable {
             packetsToSend.add(new Packet(i, buf));
         }
     }
+
+    public DatagramSocket getSocket() {
+        return socket;
+    }
+
 }

@@ -12,6 +12,7 @@ public class P2PReceptionThread implements Runnable {
         this.window = p2P_window;
     }
 
+
     @Override
     public void run() {
         byte[] buffer = new byte[2048];

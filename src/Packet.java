@@ -1,8 +1,8 @@
 import java.util.Objects;
 
 public class Packet {
-    private int order = 0;
-    private byte[] packet = new byte[2000];
+    private final int order;
+    private final byte[] packet;
     private boolean recieved;
     public Packet(int order, byte[] packet){
         this.order = order;
