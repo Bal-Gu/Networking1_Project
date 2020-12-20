@@ -60,6 +60,7 @@ public class P2PReceptionThread implements Runnable {
                     break;
                 case "MESSAGE":
                     ReceptionThreadMessage message = new ReceptionThreadMessage(packet, buffer);
+                    message.run();
                     //TODO MESSAGE add message to the messages list and actualise the P2P_Window
                     break;
                 case "FILE":

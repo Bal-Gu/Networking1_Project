@@ -17,7 +17,7 @@ public class ReceptionThreadMessage implements Runnable{
 
         DatagramSocket socket;
         while(true) {
-            try (DatagramSocket randSock = new DatagramSocket((int) (Math.random() * 20000))) {
+            try (DatagramSocket randSock = new DatagramSocket((int) (Math.random() * 65536))) {
                 socket = randSock;
                 break;
             } catch (SocketException ignored) {}
@@ -30,6 +30,7 @@ public class ReceptionThreadMessage implements Runnable{
         } catch (IOException e) {
             e.printStackTrace();
         }
+        //TODO while loop with parsing the last byte and sending an acknowleagment (the number in return)
 
     }
 }
