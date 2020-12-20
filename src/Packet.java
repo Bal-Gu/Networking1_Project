@@ -3,13 +3,20 @@ import java.util.Objects;
 public class Packet {
     private int order = 0;
     private byte[] packet = new byte[2000];
-    private final boolean recieved;
-    public Packet(int order, boolean recieved, byte[] packet){
+    private boolean recieved;
+    public Packet(int order, byte[] packet){
         this.order = order;
-        this.recieved = recieved;
+        this.recieved = false;
         this.packet = packet;
     }
 
+    public int getOrder() {
+        return order;
+    }
+
+    public void setRecieved(boolean b){
+        this.recieved = b;
+    }
     public byte[] getPacket() {
         return packet;
     }
