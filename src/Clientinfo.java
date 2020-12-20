@@ -9,7 +9,7 @@ public class Clientinfo {
     private final InetAddress address;
     private final int port;
     private ArrayList<Clientinfo> peers = new ArrayList<>();
-    private ArrayList<String> messages;
+    private ArrayList<Messages> messages;
     private String username = "";
     private DatagramSocket socket;
     private boolean connected = true;
