@@ -174,19 +174,22 @@ public class SendingThread implements Runnable {
     private void MessagesToPackets(String message) {
         ByteToPackets(message.getBytes());
     }
-    private void ByteToPackets(byte[] b){
+    public void ByteToPackets(byte[] b){
         for (int i = 0; i <= b.length / 1000; i++) {
-
+            if(i*1000 >= b.length){
+                break;
+            }
             byte[] buf = new byte[1024];
             byte[] max1000buff = Arrays.copyOfRange(b, i * 1000, (int) Math.min((long) (i + 1) * 1000 - 1, b.length - 1));
-            System.arraycopy(max1000buff, 0, buf, 0, buf.length);
+            System.arraycopy(max1000buff, 0, buf, 0, max1000buff.length);
             byte[] intbyte = Integer.toString(i).getBytes();
             int count = 0;
-            for (int j = 23 - intbyte.length; j < 24; j++) {
-                buf[i + 1000] = intbyte[count];
+            for (int j = 24 - intbyte.length; j < 24; j++) {
+                buf[j + 1000] = intbyte[count];
                 count++;
             }
             packetsToSend.add(new Packet(i, buf));
+            System.out.println(new String(buf,0,buf.length));
         }
     }
 
