@@ -92,9 +92,9 @@ public class P2P_Window extends JFrame {
         //sets the ButtonListener
         connectedButton.addActionListener(e -> {
             if (connectedButton.getText().equals("Connected")) {
+                disconnect();
                 sendToPeers("STOP");
 
-                disconnect();
             } else {
                 reconnected();
                 sendToPeers("RECONNECTION");
@@ -159,12 +159,14 @@ public class P2P_Window extends JFrame {
         connectedButton.setText("Connected");
         connectedButton.setForeground(new Color(255, 255, 255));
         connectedButton.setFont(new Font(Font.SERIF, Font.BOLD, 60));
+        connectedButton.repaint();
 
     }
 
     public void disconnect() {
         connectedButton.setBackground(new Color(128, 0, 0));
         connectedButton.setText("Disconnected");
+        connectedButton.repaint();
     }
 
     public void reconnected() {
@@ -203,18 +205,18 @@ public class P2P_Window extends JFrame {
             RightPanel.remove(comp);
         }
         RightPanel.setVisible(true);
-        setLayout(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
-        c.fill = GridBagConstraints.CENTER;
+        //RightPanel.setLayout(new GridBagLayout());
+        RightPanel.setLayout(new BoxLayout(RightPanel,BoxLayout.Y_AXIS));
+        //GridBagConstraints c = new GridBagConstraints();
+
         for (int i = 0; i < clientinfo.getPeers().size(); i++) {
-            c.gridx = i;
+
             JLabel label = new JLabel(clientinfo.getPeers().get(i).getUsername());
             label.setFont(new Font(Font.MONOSPACED, Font.ITALIC, 30));
             label.setForeground(clientinfo.getPeers().get(i).isConnected() ? new Color(11, 102, 35) : new Color(128, 0, 0));
-            label.setBorder(new CompoundBorder( // sets two borders
-            ));
 
-            RightPanel.add(label, c);
+
+            RightPanel.add(label);
         }
         RightPanel.revalidate();
         RightPanel.repaint();

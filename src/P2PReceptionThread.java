@@ -17,8 +17,10 @@ public class P2PReceptionThread implements Runnable {
     public void run() {
         byte[] buffer = new byte[2048];
         while (stay) {
-            //TODO if the socket is closed then it should exit the windows and exit the programm.
-
+            //if the socket is closed then it should exit the windows and exit the programm.
+            if(client.getSocket().isClosed()){
+                System.exit(0);
+            }
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
             try {
                 client.getSocket().receive(packet);
@@ -28,21 +30,20 @@ public class P2PReceptionThread implements Runnable {
                 continue;
             }
             String recieve = new String(packet.getData(), 0, packet.getLength());
-            System.out.println("Recieved "+recieve);
+            System.out.println("Recieved " + recieve);
             String keyword = recieve.split("\\s+")[0];
             Clientinfo peer;
             switch (keyword) {
-                case "/ping":
-                    //TODO /ping makes a echo request to the users to so if they are still connected.
-                    break;
                 case "/username":
                     peer = client.searchpeers(packet.getAddress(), packet.getPort());
-                    StringBuilder peerName = new StringBuilder();
-                    for (int i = 1; i < recieve.split("\\s+").length; i++) {
-                        peerName.append(recieve.split("\\s+")[i]).append(" ");
+                    if (peer != null) {
+                        StringBuilder peerName = new StringBuilder();
+                        for (int i = 1; i < recieve.split("\\s+").length; i++) {
+                            peerName.append(recieve.split("\\s+")[i]).append(" ");
+                        }
+                        peer.setUsername(peerName.toString());
+                        window.updateUsername();
                     }
-                    peer.setUsername(peerName.toString());
-                    window.updateUsername();
                     break;
                 case "/quit":
                     //quit removes the peer from the peer list
@@ -52,14 +53,14 @@ public class P2PReceptionThread implements Runnable {
                     break;
                 case "STOP":
                     peer = client.searchpeers(packet.getAddress(), packet.getPort());
-                    if(peer != null){
+                    if (peer != null) {
                         peer.setConnected(false);
                         window.updateUsername();
                     }
                     break;
                 case "RECONNECTION":
                     peer = client.searchpeers(packet.getAddress(), packet.getPort());
-                    if(peer != null){
+                    if (peer != null) {
                         peer.setConnected(true);
                         window.updateUsername();
                     }
