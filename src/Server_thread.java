@@ -45,9 +45,9 @@ public class Server_thread implements Runnable {
             server.getS().release();
             String connected = server.getClientList().size() + "";
             for (Clientinfo client : server.getClientList()) {
-                byte[] buffer = new byte[1024];
-                packet = new DatagramPacket(buffer, buffer.length, client.getAddress(), client.getPort());
+                byte[] buffer;
                 buffer = connected.getBytes();
+                packet = new DatagramPacket(buffer, buffer.length, client.getAddress(), client.getPort());
                 try {
                     server.getSocket().send(packet);
                 } catch (IOException e) {
@@ -63,6 +63,7 @@ public class Server_thread implements Runnable {
                 } catch (IOException | InterruptedException e) {
                     e.printStackTrace();
                 }
+                server.getClientList().clear();
             }
         } else {
             //splits the join out
@@ -93,7 +94,7 @@ public class Server_thread implements Runnable {
                 server.getClientList().add(cl);
                 System.out.println("Server got username " + name);
                 System.out.println("Server has " + server.getClientList().size() + " client");
-                byte[] buffer = new byte[1024];
+                byte[] buffer;
                 String connected = server.getClientList().size() + "";
                 for (Clientinfo client : server.getClientList()) {
                     buffer = connected.getBytes();
