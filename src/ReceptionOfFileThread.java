@@ -70,9 +70,9 @@ public class ReceptionOfFileThread implements Runnable {
                 String packageDataString = new String(packageData);
 
                 //THE FIRST WHILE LOOP OF THE RECEPTION HAS TO GET THE PACKAGE AND CHECK FOR A FILENAME (tipp use regex and split with //s* and get the first key)
-                if (packageDataString.matches("^[\\w,\\s-]+\\.[A-Za-z]{3}")) { //File Name with extension having 3 to 5 chars
+                if (packageDataString.matches("^[\\w,\\s-]+\\.[A-Za-z]{3,5}")) { //File Name with extension having 3 to 5 chars
                     //AFTER RECEPTION OF FILENAME SAVE IT AND WAIT FOR THE RECEPTION OF END
-                    fileName = packageDataString.split("^[\\w,\\s-]+\\.[A-Za-z]{3}");
+                    fileName = packageDataString.split("^[\\w,\\s-]+\\.[A-Za-z]{3,5}");
                     gotFilename = true;
                 }
 
