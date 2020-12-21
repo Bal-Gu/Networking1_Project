@@ -25,12 +25,15 @@ public class ReceptionOfFileThread implements Runnable {
         while (true) {
             //FIND A NEW FREE SOCKET/PORT
             int port = 0;
-            try {
-                ServerSocket server = new ServerSocket(0);
-                port = server.getLocalPort();
-                server.close();
-            } catch (IOException e) {
-                throw new RuntimeException("No port found", e);
+            while(true) {
+                port = (int)(Math.random() * 65535);
+                try{
+                    DatagramSocket socket = new DatagramSocket(port);
+                    socket.close();
+                    break;
+                } catch (SocketException ignored) {
+                    //ignored
+                }
             }
 
             //SEND AN OK MESSAGE TO THE SENDER (USE THE PACKAGE IP AND PORT)
@@ -67,14 +70,14 @@ public class ReceptionOfFileThread implements Runnable {
                 String packageDataString = new String(packageData);
 
                 //THE FIRST WHILE LOOP OF THE RECEPTION HAS TO GET THE PACKAGE AND CHECK FOR A FILENAME (tipp use regex and split with //s* and get the first key)
-                if (packageDataString.matches("^[\\w,\\s-]+\\.[A-Za-z]{3}")) { //File Name with extension having 3 chars
+                if (packageDataString.matches("^[\\w,\\s-]+\\.[A-Za-z]{3}")) { //File Name with extension having 3 to 5 chars
                     //AFTER RECEPTION OF FILENAME SAVE IT AND WAIT FOR THE RECEPTION OF END
                     fileName = packageDataString.split("^[\\w,\\s-]+\\.[A-Za-z]{3}");
                     gotFilename = true;
                 }
 
                 //AFTER SECOND END OR TIMEOUT HAS BEEN RECIEVED CLOSE THE SOCKET CONNECTION
-                if (packageDataString == "END") {
+                if (packageDataString.equals("END")) {
                     countEnd++;
                     socket.close();
                 }
