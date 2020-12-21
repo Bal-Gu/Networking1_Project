@@ -15,7 +15,7 @@ public class P2PReceptionThread implements Runnable {
 
     @Override
     public void run() {
-        byte[] buffer = new byte[2048];
+        byte[] buffer = new byte[1024];
         while (stay) {
             //if the socket is closed then it should exit the windows and exit the programm.
             if (client.getSocket().isClosed()) {
