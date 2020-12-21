@@ -74,7 +74,7 @@ public class ReceptionOfFileThread implements Runnable {
                 }
 
                 //AFTER SECOND END OR TIMEOUT HAS BEEN RECIEVED CLOSE THE SOCKET CONNECTION
-                if (packageDataString == "END") {
+                if (packageDataString.equals("END")) {
                     countEnd++;
                     socket.close();
                 }
