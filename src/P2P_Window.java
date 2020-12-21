@@ -5,10 +5,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 public class P2P_Window extends JFrame {
     private Clientinfo clientinfo;
-    private JLabel username;
+    private JTextField username;
     private JPanel leftPanel, MiddlePanel, RightPanel;
     private JButton connectedButton;
     private JScrollPane MessagePane, UsernamePane;
@@ -33,7 +37,7 @@ public class P2P_Window extends JFrame {
 
 
         RightPanel = new JPanel(new GridLayout(0, 1));
-        updateUsername(RightPanel);
+        updateUsername();
         UsernamePane = new JScrollPane(RightPanel);
         UsernamePane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         UsernamePane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -65,10 +69,13 @@ public class P2P_Window extends JFrame {
         c.gridwidth = 3;
         c.gridheight = 1;
         leftPanel.setLayout(gridleft);
-        this.username = new JLabel(clientinfo.getUsername());
+        this.username = new JTextField(clientinfo.getUsername());
+        this.username.setBackground(null);
+        this.username.setBorder(javax.swing.BorderFactory.createEmptyBorder());
         this.username.setFont(new Font(Font.MONOSPACED, Font.ITALIC, 50));
+        this.username.setCaretColor(username.getBackground());
         leftPanel.add(username, c);
-        username.setVisible(true);
+        username.setOpaque(false);
 
         //finish the leftPanel
         c.gridx = 1;
@@ -83,14 +90,14 @@ public class P2P_Window extends JFrame {
 
 
         //sets the ButtonListener
-        connectedButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (connectedButton.getText().equals("Connected")) {
-                    disconnect();
-                } else {
-                    reconnected();
-                }
+        connectedButton.addActionListener(e -> {
+            if (connectedButton.getText().equals("Connected")) {
+                sendToPeers("STOP");
+
+                disconnect();
+            } else {
+                reconnected();
+                sendToPeers("RECONNECTION");
             }
         });
 
@@ -98,22 +105,54 @@ public class P2P_Window extends JFrame {
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                //TODO send /quit to every peers
+                sendToPeers("/quit");
                 super.windowClosed(e);
+            }
+        });
+
+        //creates the ReceptionThread
+
+        P2PReceptionThread thread = new P2PReceptionThread(this, clientinfo);
+        new Thread(thread).start();
+
+        //create listener  for username changes
+        username.addActionListener(new ActionListener() {
+            //TODO restrict up to 25 and Change GUI Font to match the actual size
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sendToPeers("/username "+ username.getText());
             }
         });
 
         this.setVisible(true);
     }
 
-    public void changeUsername(String s) {
-        this.username.setText(s);
-        //TODO send the messages to the peers
+    private void sendToPeers(String message) {
+        for (Clientinfo client : clientinfo.getPeers()) {
+            try {
+                clientinfo.getSocket().send(new DatagramPacket(
+                        message.getBytes(StandardCharsets.UTF_8),
+                        message.getBytes(StandardCharsets.UTF_8).length,
+                        client.getAddress(),
+                        client.getPort()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-    public void actualisesUsernameList() {
-        //TODO add all usernames to the Pane. (Clear it bevor)
+    public JPanel getRightPanel() {
+        return RightPanel;
     }
+
+    public void changeUsername(String s) {
+        this.username.setText(s);
+        //send the messages to the peers
+        sendToPeers("/username "+ s);
+
+    }
+
+
 
     public void connected() {
         connectedButton.setBackground(new Color(11, 102, 35));
@@ -129,7 +168,6 @@ public class P2P_Window extends JFrame {
     }
 
     public void reconnected() {
-        //TODO send RECONNECTION
         connected();
     }
 
@@ -152,9 +190,19 @@ public class P2P_Window extends JFrame {
     }
 
 
-    public void updateUsername(JPanel p) {
-
-        p.setVisible(true);
+    public void updateUsername() {
+        //finds component that are Labels and remove them
+        ArrayList<Component> toRemove = new ArrayList<>();
+        for(Component comp : RightPanel.getComponents()){
+            if(comp instanceof JLabel){
+                toRemove.add(comp);
+            }
+        }
+        //Removes Labels avoiding runtime error
+        for(Component comp : toRemove){
+            RightPanel.remove(comp);
+        }
+        RightPanel.setVisible(true);
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.CENTER;
@@ -166,12 +214,12 @@ public class P2P_Window extends JFrame {
             label.setBorder(new CompoundBorder( // sets two borders
             ));
 
-            p.add(label, c);
+            RightPanel.add(label, c);
         }
+        RightPanel.revalidate();
+        RightPanel.repaint();
 
     }
-    //TODO files send should be on another thread such that it doesn't block the GUI
-    //TODO long messages should be on another thread such that it doens't block the GUI
     //TODO make a message actualiser that will update the scrolling pane
     //TODO make a textarea with a keylistener for enter that will send the message.
     //TODO keylistener should then send the message  to all the peers.

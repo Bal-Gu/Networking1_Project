@@ -10,7 +10,7 @@ public class Clientinfo {
     private final int port;
     private ArrayList<Clientinfo> peers = new ArrayList<>();
     private ArrayList<Messages> messages;
-    private String username = "";
+    private String username = "Give us your username";
     private DatagramSocket socket;
     private boolean connected = true;
 
