@@ -23,6 +23,7 @@ public class ReceptionOfFileThread implements Runnable {
     @Override
     public void run() {
         while (true) {
+            
             //FIND A NEW FREE SOCKET/PORT
             int port = 0;
             while(true) {
