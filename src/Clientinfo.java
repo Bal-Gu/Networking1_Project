@@ -8,9 +8,9 @@ import java.util.regex.Pattern;
 public class Clientinfo {
     private final InetAddress address;
     private final int port;
-    private final ArrayList<Clientinfo> peers = new ArrayList<>();
+    private ArrayList<Clientinfo> peers = new ArrayList<>();
     private ArrayList<Messages> messages;
-    private String username = "Give us your username";
+    private String username = "";
     private DatagramSocket socket;
     private boolean connected = true;
 
@@ -45,9 +45,6 @@ public class Clientinfo {
 
     public Clientinfo searchpeers(InetAddress a, int port) {
         Clientinfo tempClient = new Clientinfo(a, port);
-        if(peers.size() == 0){
-            return null;
-        }
         int index = 0;
         while (peers.get(index) != null) {
             if (peers.get(index).equals(tempClient)) {
@@ -63,13 +60,22 @@ public class Clientinfo {
         return username;
     }
 
+    public void removeFromPeers() {
+        if (peers == null) {
+            return;
+        }
+        for (Clientinfo c : peers) {
+            peers.remove(this);
+        }
+    }
+
     public void sendAllClientsInfoToClient(CentralizedServer cs) throws IOException, InterruptedException {
         if (cs.getClientList() == null) {
             return;
         }
         byte[] buffer = new byte[2048];
 
-        StringBuilder message = new StringBuilder();
+        StringBuilder message = new StringBuilder("");
         ArrayList<Clientinfo> cl = new ArrayList<>();
         for (Clientinfo c : cs.getClientList()) {
             Thread.sleep(100);

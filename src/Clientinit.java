@@ -1,27 +1,17 @@
-import java.net.*;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 
 public class Clientinit {
-    private DatagramSocket socket;
+    private final DatagramSocket socket;
     private final Clientinfo c;
     private final int port = 2077;
-    private int port1 = 0;
     private final InetAddress serveraddress;
     public Clientinit() throws SocketException, UnknownHostException {
-
+        socket = new DatagramSocket();
         serveraddress = InetAddress.getByName("localhost");
-        //Create Socket
-        while(true) {
-            port1 = (int)(Math.random() * 65535);
-            try{
-                DatagramSocket socket2 = new DatagramSocket(port1);
-                socket = socket2;
-                break;
-
-            } catch (SocketException ignored) {
-                //ignored
-            }
-        }
-        this.c = new Clientinfo(serveraddress, port1) ;
+        this.c = new Clientinfo(socket.getLocalAddress(), port) ;
         c.setSocket(socket);
         socket.setSoTimeout(10000);
         new ClientconnectWindow(this);
