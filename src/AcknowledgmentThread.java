@@ -26,21 +26,10 @@ public class AcknowledgmentThread implements Runnable {
                     //receives package
                     sendingThread.getSocket().receive(packet);
                 } catch (SocketTimeoutException e) {
-                    //package didn't got in time thus ping the user to see if he's still alive
-                    String sending = "/ping";
-                    buffer = sending.getBytes();
-                    DatagramPacket packetToSend = new DatagramPacket(buffer, buffer.length, packet.getAddress(), packet.getPort());
-                    try {
-                        sendingThread.getSocket().send(packetToSend);
-                    } catch (IOException ignore) {
-
-                    }
-                    //don't care of the response juste see if he is alive
-                    packet = new DatagramPacket(buffer, buffer.length);
-                    try {
-                        sendingThread.getSocket().receive(packet);
-                    } catch (SocketTimeoutException e1) {
-                        //client is dead aboard.
+                    if (packet.getAddress().isReachable(sendingThread.getSocket().getSoTimeout())) {
+                        //client isn't dead
+                        continue;
+                    } else {
                         sendingThread.earlyExit();
                         return;
                     }

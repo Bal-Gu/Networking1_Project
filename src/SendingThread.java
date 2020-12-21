@@ -35,15 +35,15 @@ public class SendingThread implements Runnable {
         FileToPackets(file);
     }
 
-    public void earlyExit(){
+    public void earlyExit() {
         emergencyExit = true;
     }
 
     @Override
     public void run() {
         //Create Socket
-        while(true) {
-            try (DatagramSocket socket2 = new DatagramSocket((int)(Math.random() * 65535))) {
+        while (true) {
+            try (DatagramSocket socket2 = new DatagramSocket((int) (Math.random() * 65535))) {
                 socket = socket2;
                 break;
 
@@ -54,10 +54,10 @@ public class SendingThread implements Runnable {
         //Send new port to the given client
         byte[] buffer;
 
-        String sending = isMessage? "MESSAGE":"FILE";
+        String sending = isMessage ? "MESSAGE" : "FILE";
         buffer = sending.getBytes();
         long start = System.currentTimeMillis();
-        DatagramPacket packet = new DatagramPacket(buffer,buffer.length,clientinfo.getAddress(),clientinfo.getPort());
+        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, clientinfo.getAddress(), clientinfo.getPort());
         try {
             socket.send(packet);
         } catch (IOException e) {
@@ -65,14 +65,14 @@ public class SendingThread implements Runnable {
         }
         //Wait for client package
         buffer = new byte[1024];
-        packet = new DatagramPacket(buffer,buffer.length);
+        packet = new DatagramPacket(buffer, buffer.length);
         try {
             socket.receive(packet);
         } catch (IOException e) {
             e.printStackTrace();
         }
         try {
-            socket.setSoTimeout((int) (System.currentTimeMillis()-start + 1000));
+            socket.setSoTimeout((int) (System.currentTimeMillis() - start + 1000));
         } catch (SocketException e) {
             e.printStackTrace();
         }
@@ -83,7 +83,7 @@ public class SendingThread implements Runnable {
         //While not all packets are marked as received send each packet.
 
         while (true) {
-            if(emergencyExit){
+            if (emergencyExit) {
                 socket.close();
                 return;
             }
@@ -101,9 +101,8 @@ public class SendingThread implements Runnable {
                 }
                 if (p.isRecieved()) {
                     continue;
-                }
-                else{
-                    DatagramPacket packetToSend = new DatagramPacket(p.getPacket(), p.getPacket().length,packet.getAddress(),packet.getPort());
+                } else {
+                    DatagramPacket packetToSend = new DatagramPacket(p.getPacket(), p.getPacket().length, packet.getAddress(), packet.getPort());
                     try {
                         socket.send(packetToSend);
                     } catch (IOException e) {
@@ -113,10 +112,10 @@ public class SendingThread implements Runnable {
                 s.release();
             }
         }
-        if(!isMessage){
-            sending = "FILENAME "+filename;
+        if (!isMessage) {
+            sending = "FILENAME " + filename;
             buffer = sending.getBytes();
-            DatagramPacket packetToSend = new DatagramPacket(buffer, buffer.length,packet.getAddress(),packet.getPort());
+            DatagramPacket packetToSend = new DatagramPacket(buffer, buffer.length, packet.getAddress(), packet.getPort());
             try {
                 socket.send(packetToSend);
             } catch (IOException e) {
@@ -132,13 +131,13 @@ public class SendingThread implements Runnable {
         //Send END to the received port
         sending = "END";
         buffer = sending.getBytes();
-        DatagramPacket packetToSend = new DatagramPacket(buffer, buffer.length,packet.getAddress(),packet.getPort());
+        DatagramPacket packetToSend = new DatagramPacket(buffer, buffer.length, packet.getAddress(), packet.getPort());
         try {
             socket.send(packetToSend);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        acknowledgmentThread.ending = true ;
+        acknowledgmentThread.ending = true;
 
     }
 
@@ -158,8 +157,8 @@ public class SendingThread implements Runnable {
 
     private boolean isnull() throws InterruptedException {
         s.acquire();
-        for(Packet p : packetsToSend){
-            if(!p.isRecieved()){
+        for (Packet p : packetsToSend) {
+            if (!p.isRecieved()) {
                 return true;
             }
         }
@@ -174,7 +173,8 @@ public class SendingThread implements Runnable {
     private void MessagesToPackets(String message) {
         ByteToPackets(message.getBytes());
     }
-    private void ByteToPackets(byte[] b){
+
+    private void ByteToPackets(byte[] b) {
         for (int i = 0; i <= b.length / 1000; i++) {
 
             byte[] buf = new byte[1024];

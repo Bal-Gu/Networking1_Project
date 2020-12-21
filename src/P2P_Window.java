@@ -103,17 +103,32 @@ public class P2P_Window extends JFrame {
             }
         });
 
+        //creates the ReceptionThread
+
+        P2PReceptionThread thread = new P2PReceptionThread(this, clientinfo);
+        new Thread(thread).start();
+
+        //create listener  for username changes
+        username.addActionListener(new ActionListener() {
+            //TODO restrict up to 25 and Change GUI Font to match the actual size
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sendToPeers("/username " + username.getText());
+            }
+        });
+
         this.setVisible(true);
     }
 
     public void changeUsername(String s) {
         this.username.setText(s);
-        //TODO send the messages to the peers
-    }
+        //send the messages to the peers
+        sendToPeers("/username " + s);
 
     public void actualisesUsernameList() {
         //TODO add all usernames to the Pane. (Clear it bevor)
     }
+
 
     public void connected() {
         connectedButton.setBackground(new Color(11, 102, 35));
@@ -155,19 +170,18 @@ public class P2P_Window extends JFrame {
     public void updateUsername() {
         //finds component that are Labels and remove them
         ArrayList<Component> toRemove = new ArrayList<>();
-        for(Component comp : RightPanel.getComponents()){
-            if(comp instanceof JLabel){
+        for (Component comp : RightPanel.getComponents()) {
+            if (comp instanceof JLabel) {
                 toRemove.add(comp);
             }
         }
         //Removes Labels avoiding runtime error
-        for(Component comp : toRemove){
+        for (Component comp : toRemove) {
             RightPanel.remove(comp);
         }
         RightPanel.setVisible(true);
-        setLayout(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
-        c.fill = GridBagConstraints.CENTER;
+        RightPanel.setLayout(new BoxLayout(RightPanel, BoxLayout.Y_AXIS));
+
         for (int i = 0; i < clientinfo.getPeers().size(); i++) {
             c.gridx = i;
             JLabel label = new JLabel(clientinfo.getPeers().get(i).getUsername());

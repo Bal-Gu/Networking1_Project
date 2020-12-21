@@ -45,6 +45,9 @@ public class Clientinfo {
 
     public Clientinfo searchpeers(InetAddress a, int port) {
         Clientinfo tempClient = new Clientinfo(a, port);
+        if (peers.size() == 0) {
+            return null;
+        }
         int index = 0;
         while (peers.get(index) != null) {
             if (peers.get(index).equals(tempClient)) {
