@@ -18,8 +18,6 @@ public class P2PReceptionThread implements Runnable {
         byte[] buffer = new byte[2048];
         while (stay) {
             //TODO if the socket is closed then it should exit the windows and exit the programm.
-            //TODO Make a timeout and catch the exception. In the exception we should check if the client is still connected or not
-            //TODO every  10 second - 1 min a handshake should be performed. Time should be random
 
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
             try {
@@ -28,7 +26,8 @@ public class P2PReceptionThread implements Runnable {
                 e.printStackTrace();
             }
             String recieve = new String(packet.getData(), 0, packet.getLength());
-            String keyword = recieve.split("\\s*")[0];
+            System.out.println("Recieved "+recieve);
+            String keyword = recieve.split("\\s+")[0];
             Clientinfo peer;
             switch (keyword) {
                 case "/ping":
@@ -37,10 +36,11 @@ public class P2PReceptionThread implements Runnable {
                 case "/username":
                     peer = client.searchpeers(packet.getAddress(), packet.getPort());
                     StringBuilder peerName = new StringBuilder();
-                    for (int i = 1; i < recieve.split("\\s*").length; i++) {
-                        peerName.append(recieve.split("\\s*")[i]);
+                    for (int i = 1; i < recieve.split("\\s+").length; i++) {
+                        peerName.append(recieve.split("\\s+")[i]).append(" ");
                     }
                     peer.setUsername(peerName.toString());
+                    window.updateUsername();
                     break;
                 case "/quit":
                     //TODO /quit removes the peer from the peer list

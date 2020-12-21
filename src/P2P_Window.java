@@ -83,14 +83,14 @@ public class P2P_Window extends JFrame {
 
 
         //sets the ButtonListener
-        connectedButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (connectedButton.getText().equals("Connected")) {
-                    disconnect();
-                } else {
-                    reconnected();
-                }
+        connectedButton.addActionListener(e -> {
+            if (connectedButton.getText().equals("Connected")) {
+                sendToPeers("STOP");
+
+                disconnect();
+            } else {
+                reconnected();
+                sendToPeers("RECONNECTION");
             }
         });
 
@@ -152,9 +152,19 @@ public class P2P_Window extends JFrame {
     }
 
 
-    public void updateUsername(JPanel p) {
-
-        p.setVisible(true);
+    public void updateUsername() {
+        //finds component that are Labels and remove them
+        ArrayList<Component> toRemove = new ArrayList<>();
+        for(Component comp : RightPanel.getComponents()){
+            if(comp instanceof JLabel){
+                toRemove.add(comp);
+            }
+        }
+        //Removes Labels avoiding runtime error
+        for(Component comp : toRemove){
+            RightPanel.remove(comp);
+        }
+        RightPanel.setVisible(true);
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.CENTER;
@@ -166,7 +176,7 @@ public class P2P_Window extends JFrame {
             label.setBorder(new CompoundBorder( // sets two borders
             ));
 
-            p.add(label, c);
+            RightPanel.add(label, c);
         }
 
     }
