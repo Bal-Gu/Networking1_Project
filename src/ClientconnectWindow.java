@@ -8,6 +8,7 @@ import java.net.DatagramPacket;
 public class ClientconnectWindow extends JFrame {
     JButton b;
     JButton readyb;
+
     public ClientconnectWindow(Clientinit cl) {
 
         b = new JButton("join group");
@@ -16,7 +17,7 @@ public class ClientconnectWindow extends JFrame {
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setResizable(false);
         this.setSize(400, 400);
-        readyb.setBounds(0,0,400,100);//TODO FIX THIS
+        readyb.setBounds(0, 0, 400, 100);//TODO FIX THIS
         b.setBounds(this.getWidth() / 2 - this.getWidth() / 8, this.getHeight() / 2 - this.getHeight() / 16, this.getWidth() / 4, this.getHeight() / 8);//TODO make it bigger
         textArea.setBounds(this.getWidth() / 2 - this.getWidth() / 8, this.getHeight() / 2 + this.getHeight() / 16, this.getWidth() / 4, this.getHeight() / 8);
         this.add(b);
@@ -26,7 +27,7 @@ public class ClientconnectWindow extends JFrame {
         this.setVisible(true);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
-        WaitingForReadyClient wfrc = new WaitingForReadyClient(ClientconnectWindow.this,cl);
+        WaitingForReadyClient wfrc = new WaitingForReadyClient(ClientconnectWindow.this, cl);
         readyb.addActionListener(e -> {
             String sending = "launch";
             byte[] buffer;
@@ -65,7 +66,7 @@ public class ClientconnectWindow extends JFrame {
                 DatagramPacket data = new DatagramPacket(buffer, buffer.length, cl.getServeraddress(), cl.getPort());
                 cl.getSocket().send(data);
                 b.setText("Welcome " + cl.getC().getUsername());
-                WaitingForReadyClient wfrc1 = new WaitingForReadyClient(ClientconnectWindow.this,cl);
+                WaitingForReadyClient wfrc1 = new WaitingForReadyClient(ClientconnectWindow.this, cl);
                 new Thread(wfrc1).start();
 
             } catch (IOException ioException) {

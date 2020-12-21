@@ -7,11 +7,13 @@ public class WaitingForReadyClient implements Runnable {
 
     Clientinit clientinit;
     boolean stop = false;
-    public WaitingForReadyClient(ClientconnectWindow ccw,Clientinit clientinit){
+
+    public WaitingForReadyClient(ClientconnectWindow ccw, Clientinit clientinit) {
         this.clientconnectWindow = ccw;
         this.clientinit = clientinit;
     }
-    public void sendStop(){
+
+    public void sendStop() {
         this.stop = true;
     }
 
@@ -26,9 +28,9 @@ public class WaitingForReadyClient implements Runnable {
 
             //wait for the ready message otherwise wait until enough persons joined in
             data = new DatagramPacket(buffer, buffer.length);
-            if(clientinit.getSocket().isClosed() || stop){
+            if (clientinit.getSocket().isClosed() || stop) {
                 exit = true;
-                clientinit.getSocket().connect(clientinit.getServeraddress(),clientinit.getPort());
+                clientinit.getSocket().connect(clientinit.getServeraddress(), clientinit.getPort());
                 String sending = "stop";
                 buffer = sending.getBytes();
                 data = new DatagramPacket(buffer, buffer.length, clientinit.getServeraddress(), clientinit.getPort());
@@ -44,11 +46,10 @@ public class WaitingForReadyClient implements Runnable {
 
 
             try {
-                try{
-                clientinit.getSocket().receive(data);
-                }
-                catch (SocketTimeoutException e){
-                    if(stop){
+                try {
+                    clientinit.getSocket().receive(data);
+                } catch (SocketTimeoutException e) {
+                    if (stop) {
                         String sending = "stop";
                         buffer = sending.getBytes();
                         data = new DatagramPacket(buffer, buffer.length, clientinit.getServeraddress(), clientinit.getPort());
@@ -58,7 +59,7 @@ public class WaitingForReadyClient implements Runnable {
                             ioException.printStackTrace();
                         }
                         clientinit.getSocket().close();
-                       return;
+                        return;
                     }
                     continue;
                 }
@@ -83,15 +84,13 @@ public class WaitingForReadyClient implements Runnable {
                 data = new DatagramPacket(buffer, buffer.length, clientinit.getServeraddress(), clientinit.getPort());
                 try {
                     clientinit.getSocket().send(data);
-                } catch (IOException ioException){
+                } catch (IOException ioException) {
                     ioException.printStackTrace();
                 }
                 break;
-            }
-            else if (res.isEmpty()){
+            } else if (res.isEmpty()) {
                 System.out.println("packet was empty");
-            }
-            else if(res.matches("^[0-9]*[^a-zA-Z]")){
+            } else if (res.matches("^[0-9]*[^a-zA-Z]")) {
                 int result = Integer.parseInt(res);
                 clientconnectWindow.readyb.setText("Currently: " + result + " participant");
                 clientconnectWindow.repaint();
@@ -106,8 +105,8 @@ public class WaitingForReadyClient implements Runnable {
         try {
             clientinit.getSocket().receive(data);
             clientinit.getC().readyparseMessage(new String(data.getData(), 0, data.getLength()));
-            for(Clientinfo client:clientinit.getC().getPeers()){
-                System.out.println("Recieved "+ client.getUsername());
+            for (Clientinfo client : clientinit.getC().getPeers()) {
+                System.out.println("Recieved " + client.getUsername());
             }
             clientconnectWindow.readyb.setText("Currently: " + clientinit.getC().getPeers().size() + " participant");
         } catch (IOException e) {

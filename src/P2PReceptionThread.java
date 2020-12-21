@@ -18,7 +18,7 @@ public class P2PReceptionThread implements Runnable {
         byte[] buffer = new byte[2048];
         while (stay) {
             //if the socket is closed then it should exit the windows and exit the programm.
-            if(client.getSocket().isClosed()){
+            if (client.getSocket().isClosed()) {
                 System.exit(0);
             }
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length);

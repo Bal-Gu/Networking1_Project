@@ -1,7 +1,8 @@
 public class Messages {
     private String username = "";
     private String message = "";
-    public Messages(String username, String message){
+
+    public Messages(String username, String message) {
         this.message = message;
         this.username = username;
     }

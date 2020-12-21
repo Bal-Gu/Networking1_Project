@@ -26,11 +26,10 @@ public class AcknowledgmentThread implements Runnable {
                     //receives package
                     sendingThread.getSocket().receive(packet);
                 } catch (SocketTimeoutException e) {
-                    if(packet.getAddress().isReachable(sendingThread.getSocket().getSoTimeout())){
+                    if (packet.getAddress().isReachable(sendingThread.getSocket().getSoTimeout())) {
                         //client isn't dead
                         continue;
-                    }
-                    else{
+                    } else {
                         sendingThread.earlyExit();
                         return;
                     }

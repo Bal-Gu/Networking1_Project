@@ -120,7 +120,7 @@ public class P2P_Window extends JFrame {
             //TODO restrict up to 25 and Change GUI Font to match the actual size
             @Override
             public void actionPerformed(ActionEvent e) {
-                sendToPeers("/username "+ username.getText());
+                sendToPeers("/username " + username.getText());
             }
         });
 
@@ -148,10 +148,9 @@ public class P2P_Window extends JFrame {
     public void changeUsername(String s) {
         this.username.setText(s);
         //send the messages to the peers
-        sendToPeers("/username "+ s);
+        sendToPeers("/username " + s);
 
     }
-
 
 
     public void connected() {
@@ -195,18 +194,18 @@ public class P2P_Window extends JFrame {
     public void updateUsername() {
         //finds component that are Labels and remove them
         ArrayList<Component> toRemove = new ArrayList<>();
-        for(Component comp : RightPanel.getComponents()){
-            if(comp instanceof JLabel){
+        for (Component comp : RightPanel.getComponents()) {
+            if (comp instanceof JLabel) {
                 toRemove.add(comp);
             }
         }
         //Removes Labels avoiding runtime error
-        for(Component comp : toRemove){
+        for (Component comp : toRemove) {
             RightPanel.remove(comp);
         }
         RightPanel.setVisible(true);
         //RightPanel.setLayout(new GridBagLayout());
-        RightPanel.setLayout(new BoxLayout(RightPanel,BoxLayout.Y_AXIS));
+        RightPanel.setLayout(new BoxLayout(RightPanel, BoxLayout.Y_AXIS));
         //GridBagConstraints c = new GridBagConstraints();
 
         for (int i = 0; i < clientinfo.getPeers().size(); i++) {

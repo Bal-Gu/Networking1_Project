@@ -4,7 +4,8 @@ public class Packet {
     private final int order;
     private final byte[] packet;
     private boolean recieved;
-    public Packet(int order, byte[] packet){
+
+    public Packet(int order, byte[] packet) {
         this.order = order;
         this.recieved = false;
         this.packet = packet;
@@ -14,9 +15,10 @@ public class Packet {
         return order;
     }
 
-    public void setRecieved(boolean b){
+    public void setRecieved(boolean b) {
         this.recieved = b;
     }
+
     public byte[] getPacket() {
         return packet;
     }
