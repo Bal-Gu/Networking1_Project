@@ -1,6 +1,6 @@
 import java.util.Objects;
 
-public class Packet {
+public class Packet implements Comparable {
     private final int order;
     private final byte[] packet;
     private boolean recieved;
@@ -35,8 +35,16 @@ public class Packet {
         return order == packet.order;
     }
 
+
     @Override
     public int hashCode() {
         return Objects.hash(order);
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if (o == null || getClass() != o.getClass()) return 0;
+        Packet packet = (Packet) o;
+        return this.order-packet.getOrder();
     }
 }
