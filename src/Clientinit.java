@@ -3,19 +3,17 @@ import java.net.*;
 public class Clientinit {
     private DatagramSocket socket;
     private final Clientinfo c;
-    private final int port = 2077;
-    private int port1 = 0;
     private final InetAddress serveraddress;
 
     public Clientinit() throws SocketException, UnknownHostException {
 
         serveraddress = InetAddress.getByName("localhost");
         //Create Socket
+        int port1;
         while (true) {
             port1 = (int) (Math.random() * 65535);
             try {
-                DatagramSocket socket2 = new DatagramSocket(port1);
-                socket = socket2;
+                socket = new DatagramSocket(port1);
                 break;
 
             } catch (SocketException ignored) {
@@ -28,7 +26,7 @@ public class Clientinit {
         new ClientconnectWindow(this);
 
     }
-    //fuck this
+
     public DatagramSocket getSocket() {
         return socket;
     }
@@ -38,7 +36,7 @@ public class Clientinit {
     }
 
     public int getPort() {
-        return port;
+        return 2077;
     }
 
     public InetAddress getServeraddress() {

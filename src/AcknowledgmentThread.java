@@ -89,7 +89,6 @@ public class AcknowledgmentThread implements Runnable {
             }
         }
         //no connections should pass thus closing the Socket
-        //no connections should pass thus closing the Socket
         sendingThread.getSocket().close();
     }
 

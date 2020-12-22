@@ -56,7 +56,7 @@ public class ClientconnectWindow extends JFrame {
 
             }
         });
-        //fuck this
+
         b.addActionListener(e -> {
 
             cl.getC().setUsername(textArea.getText().replace("\n", " "));

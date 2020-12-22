@@ -40,4 +40,3 @@ public class Packet {
         return Objects.hash(order);
     }
 }
-//fuck this
