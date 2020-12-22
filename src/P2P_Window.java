@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 
 public class P2P_Window extends JFrame {
     private Clientinfo clientinfo;
@@ -124,6 +125,7 @@ public class P2P_Window extends JFrame {
         this.username.setText(s);
         //send the messages to the peers
         sendToPeers("/username " + s);
+    }
 
     public void actualisesUsernameList() {
         //TODO add all usernames to the Pane. (Clear it bevor)
@@ -183,14 +185,14 @@ public class P2P_Window extends JFrame {
         RightPanel.setLayout(new BoxLayout(RightPanel, BoxLayout.Y_AXIS));
 
         for (int i = 0; i < clientinfo.getPeers().size(); i++) {
-            c.gridx = i;
+
             JLabel label = new JLabel(clientinfo.getPeers().get(i).getUsername());
             label.setFont(new Font(Font.MONOSPACED, Font.ITALIC, 30));
             label.setForeground(clientinfo.getPeers().get(i).isConnected() ? new Color(11, 102, 35) : new Color(128, 0, 0));
             label.setBorder(new CompoundBorder( // sets two borders
             ));
 
-            RightPanel.add(label, c);
+            RightPanel.add(label);
         }
 
     }
