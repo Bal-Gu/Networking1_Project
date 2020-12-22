@@ -1,8 +1,10 @@
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.*;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
 import java.util.Arrays;
-import java.util.Base64;
 
 public class ReceptionOfFileThread implements Runnable {
     private final DatagramPacket packet;
@@ -20,36 +22,50 @@ public class ReceptionOfFileThread implements Runnable {
     @Override
     public void run() {
         //FIND A NEW FREE SOCKET/PORT
-        int port = 0;
+        int port;
         while (true) {
             port = (int) (Math.random() * 65535);
             try {
-                DatagramSocket socket = new DatagramSocket(port);
-                socket.close();
+                mySocket = new DatagramSocket(port);
                 break;
             } catch (SocketException ignored) {
                 //ignored
             }
         }
 
+        //send ok after creation of socket
+        String message = "ok";
+        DatagramPacket datagramPacket = new DatagramPacket(
+                message.getBytes(),
+                message.length(),
+                packet.getAddress(),
+                packet.getPort()
+        );
+        try {
+            mySocket.send(datagramPacket);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
         while (true) {
             //SEND AN OK MESSAGE TO THE SENDER (USE THE PACKAGE IP AND PORT)
-            try (DatagramSocket socket = new DatagramSocket(port)) {
-                mySocket = socket;
-                String message = "ok";
-                DatagramPacket datagramPacket = new DatagramPacket(
-                        message.getBytes(),
-                        message.length(),
-                        packet.getAddress(),
-                        packet.getPort()
-                );
-                socket.send(datagramPacket);
+            try {
 
-                packet.getData();
-                socket.receive(packet);
+
+                datagramPacket = new DatagramPacket(
+                        message.getBytes(),
+                        message.length()
+                );
+
+                try {
+                    mySocket.receive(datagramPacket);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
                 //PARSE THE MESSAGE. THE LAST 24 BYTES FROM 1024 ARE THE PACKAGE NUMBER
-                String s = new String(packet.getData(), 1000, packet.getLength());
+                String s = new String(packet.getData(), 1000, packet.getLength() - 1000);
 
                 //SEND THE PACKAGE NUMBER
                 DatagramPacket returnPackageNumber = new DatagramPacket(
@@ -58,36 +74,39 @@ public class ReceptionOfFileThread implements Runnable {
                         packet.getAddress(),
                         packet.getPort()
                 );
-                socket.send(returnPackageNumber);
+                mySocket.send(returnPackageNumber);
 
                 //SAVE THE 1000 BYTES OF THE PACKAGE
                 String packageDataString = new String(packet.getData(), 0, packet.getLength() - 24);
-                finalFileData += packageDataString;
+
 
                 //THE FIRST WHILE LOOP OF THE RECEPTION HAS TO GET THE PACKAGE AND CHECK FOR A FILENAME (tipp use regex and split with //s* and get the first key)
                 if (packageDataString.matches("[\\w]+\\.[A-Za-z]{3,5}")) { //File Name with extension having 3 to 5 chars
                     //AFTER RECEPTION OF FILENAME SAVE IT AND WAIT FOR THE RECEPTION OF END
                     fileName = packageDataString.split("[\\w]+\\.[A-Za-z]{3,5}");
+                    //TODO put this string in the client message. May have to find the right peer from the peer list. and get the client from the constructur.
                     gotFilename = true;
+                } else {
+                    finalFileData.concat(packageDataString);
                 }
 
                 //AFTER SECOND END OR TIMEOUT HAS BEEN RECIEVED CLOSE THE SOCKET CONNECTION
                 if (packageDataString.equals("END")) {
                     countEnd++;
-                    socket.close();
+
                 }
 
                 if (countEnd == 1) {
                     //AFTER FIRST END HAS REACHED SEND END AS WELL TO CONFIRME THE CONNECTION BEEING CLOSED
-                    if (mySocket.isConnected()){
-                        mySocket.close();
-                    }
+
+                    mySocket.close();
+
                     break;
                 }
 
             } catch (IOException e) { //AFTER X SECONDS AFTER NOT RECIEVING A PACKAGE USE THE TIMEOUT TO DO A PING REQUEST
                 e.printStackTrace();
-                InetAddress client = null;
+                InetAddress client ;
                 client = packet.getAddress();
                 try {
                     if (!client.isReachable(5000)) {
@@ -110,7 +129,7 @@ public class ReceptionOfFileThread implements Runnable {
             }
         }
 
-        //TODO ADD A MESSAGE WITH THE NAME OF THE FILE INTO THE ACTUAL CLIENT
+
         System.out.println("File has been saved.");
     }
 }
