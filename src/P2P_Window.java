@@ -1,5 +1,6 @@
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
+import javax.swing.border.EtchedBorder;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -13,6 +14,8 @@ public class P2P_Window extends JFrame {
     private final JTextField username;
     private final JPanel leftPanel;
     private final JPanel MiddlePanel;
+    private final JPanel MessagePanel;
+    private final JTextArea MessageArea;
     private final JPanel RightPanel;
     private final JButton connectedButton;
     private final JScrollPane MessagePane;
@@ -36,6 +39,18 @@ public class P2P_Window extends JFrame {
         MessagePane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         MessagePane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
+        //MESSAGES AREA settings
+        MessageArea = new JTextArea();
+        MessageArea.setLineWrap(true);
+        MessageArea.setOpaque(false);
+        MessageArea.setRows(10);
+        MessageArea.setColumns(10);
+        MessageArea.setBorder(new CompoundBorder(BorderFactory.createMatteBorder(5, 5, 5, 5, Color.GRAY),
+                BorderFactory.createMatteBorder(5, 5, 5, 5, Color.GRAY)));
+        MessageArea.setPreferredSize(new Dimension(500,200));
+        MessagePanel = new JPanel(new BorderLayout());
+        MessagePanel.add(MessageArea);
+
 
         RightPanel = new JPanel(new GridLayout(0, 1));
         updateUsername();
@@ -56,10 +71,20 @@ public class P2P_Window extends JFrame {
         this.add(leftPanel, c);
         c.weightx = 1;
         c.gridx = 1;
+        c.gridheight = 1;
         this.add(MessagePane, c);
+        c.gridheight = 3;
         c.weightx = 0.5;
         c.gridx = 2;
         this.add(UsernamePane, c);
+        c.gridheight = 1;
+        c.gridwidth = 0;
+        c.weightx = 0;
+        c.gridx = 1;
+        c.gridy = 2;
+        c.weighty = 0.2;
+        c.fill = GridBagConstraints.BOTH;
+        this.add(MessagePanel,c);
 
 
         //Set's the username
@@ -68,7 +93,6 @@ public class P2P_Window extends JFrame {
         c.gridy = 0;
         c.weightx = 0.05;
         c.gridwidth = 3;
-        c.gridheight = 1;
         leftPanel.setLayout(gridleft);
         this.username = new JTextField(clientinfo.getUsername());
         this.username.setBackground(null);
@@ -119,6 +143,8 @@ public class P2P_Window extends JFrame {
         //create listener  for username changes
         //TODO restrict up to 25 and Change GUI Font to match the actual size
         username.addActionListener(e -> sendToPeers("/username " + username.getText()));
+
+
 
         this.setVisible(true);
     }

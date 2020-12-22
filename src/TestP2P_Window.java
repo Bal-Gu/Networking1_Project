@@ -11,7 +11,7 @@ public class TestP2P_Window {
         p.add(new Packet(4,new byte[20]));
         p.add(new Packet(1,new byte[20]));
         p.add(new Packet(3,new byte[20]));
-        Collections.sort(p);
+        Collections.sort(p );
         for(Packet p1 : p){
             System.out.println(p1.getOrder());
         }
