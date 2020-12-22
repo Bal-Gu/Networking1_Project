@@ -13,6 +13,7 @@ import java.util.ArrayList;
 public class P2P_Window extends JFrame {
     private Clientinfo clientinfo;
     private JTextField username;
+    private String TODELETE = "";
     private JPanel leftPanel, MiddlePanel, RightPanel;
     private JButton connectedButton;
     private JScrollPane MessagePane, UsernamePane;
