@@ -110,3 +110,4 @@ public class ReceptionOfFileThread implements Runnable {
         System.out.println("File has been saved.");
     }
 }
+//fuck this

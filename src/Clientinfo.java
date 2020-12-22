@@ -58,7 +58,7 @@ public class Clientinfo {
         }
         return null;
     }
-
+    //fuck this
     public String getUsername() {
         return username;
     }
