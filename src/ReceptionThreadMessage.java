@@ -42,7 +42,7 @@ public class ReceptionThreadMessage implements Runnable {
                 break;
             }
 
-            String getNumber = new String(pack.getData(), 1000, pack.getLength());
+            String getNumber = new String(pack.getData(), 1000, pack.getLength()-1000);
 
             byte[] newbufpack;
             newbufpack = getNumber.getBytes();
@@ -55,8 +55,10 @@ public class ReceptionThreadMessage implements Runnable {
                 e.printStackTrace();
             }
 
-
         }
+
+        //TODO send end as packet before the break/after the while
+
         //TODO while loop with parsing the last byte and sending an acknowleagment (the number in return)
 
     }
