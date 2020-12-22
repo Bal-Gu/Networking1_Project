@@ -13,6 +13,7 @@ import java.util.ArrayList;
 public class P2P_Window extends JFrame {
     private Clientinfo clientinfo;
     private JTextField username;
+    private String TODELETE = "";
     private JPanel leftPanel, MiddlePanel, RightPanel;
     private JButton connectedButton;
     private JScrollPane MessagePane, UsernamePane;
@@ -70,9 +71,12 @@ public class P2P_Window extends JFrame {
         c.gridheight = 1;
         leftPanel.setLayout(gridleft);
         this.username = new JTextField(clientinfo.getUsername());
+        this.username.setBackground(null);
+        this.username.setBorder(javax.swing.BorderFactory.createEmptyBorder());
         this.username.setFont(new Font(Font.MONOSPACED, Font.ITALIC, 50));
+        this.username.setCaretColor(username.getBackground());
         leftPanel.add(username, c);
-        username.setVisible(true);
+        username.setOpaque(false);
 
         //finish the leftPanel
         c.gridx = 1;
@@ -89,9 +93,9 @@ public class P2P_Window extends JFrame {
         //sets the ButtonListener
         connectedButton.addActionListener(e -> {
             if (connectedButton.getText().equals("Connected")) {
+                disconnect();
                 sendToPeers("STOP");
 
-                disconnect();
             } else {
                 reconnected();
                 sendToPeers("RECONNECTION");
@@ -102,7 +106,7 @@ public class P2P_Window extends JFrame {
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                //TODO send /quit to every peers
+                sendToPeers("/quit");
                 super.windowClosed(e);
             }
         });
@@ -125,6 +129,7 @@ public class P2P_Window extends JFrame {
     }
 
     private void sendToPeers(String message) {
+        //adding comment to wake git up
         for (Clientinfo client : clientinfo.getPeers()) {
             try {
                 clientinfo.getSocket().send(new DatagramPacket(
@@ -138,6 +143,16 @@ public class P2P_Window extends JFrame {
         }
     }
 
+    public JPanel getRightPanel() {
+        return RightPanel;
+    }
+
+    public void changeUsername(String s) {
+        this.username.setText(s);
+        //send the messages to the peers
+        sendToPeers("/username " + s);
+
+    }
 
 
     public void connected() {
@@ -145,16 +160,17 @@ public class P2P_Window extends JFrame {
         connectedButton.setText("Connected");
         connectedButton.setForeground(new Color(255, 255, 255));
         connectedButton.setFont(new Font(Font.SERIF, Font.BOLD, 60));
+        connectedButton.repaint();
 
     }
 
     public void disconnect() {
         connectedButton.setBackground(new Color(128, 0, 0));
         connectedButton.setText("Disconnected");
+        connectedButton.repaint();
     }
 
     public void reconnected() {
-        //TODO send RECONNECTION
         connected();
     }
 
@@ -190,22 +206,23 @@ public class P2P_Window extends JFrame {
             RightPanel.remove(comp);
         }
         RightPanel.setVisible(true);
+        //RightPanel.setLayout(new GridBagLayout());
         RightPanel.setLayout(new BoxLayout(RightPanel, BoxLayout.Y_AXIS));
+        //GridBagConstraints c = new GridBagConstraints();
 
         for (int i = 0; i < clientinfo.getPeers().size(); i++) {
 
             JLabel label = new JLabel(clientinfo.getPeers().get(i).getUsername());
             label.setFont(new Font(Font.MONOSPACED, Font.ITALIC, 30));
             label.setForeground(clientinfo.getPeers().get(i).isConnected() ? new Color(11, 102, 35) : new Color(128, 0, 0));
-            label.setBorder(new CompoundBorder( // sets two borders
-            ));
+
 
             RightPanel.add(label);
         }
+        RightPanel.revalidate();
+        RightPanel.repaint();
 
     }
-    //TODO files send should be on another thread such that it doesn't block the GUI
-    //TODO long messages should be on another thread such that it doens't block the GUI
     //TODO make a message actualiser that will update the scrolling pane
     //TODO make a textarea with a keylistener for enter that will send the message.
     //TODO keylistener should then send the message  to all the peers.
@@ -216,3 +233,4 @@ public class P2P_Window extends JFrame {
     //TODO add the usernames in a scrolling pane with the color of their respectiv connection
 
 }
+//fuck this
