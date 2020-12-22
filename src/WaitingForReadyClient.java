@@ -22,14 +22,13 @@ public class WaitingForReadyClient implements Runnable {
         byte[] buffer;
         clientconnectWindow.b.setText("Waiting for connections");
         DatagramPacket data;
-        boolean exit = false;
         while (true) {
+
             buffer = new byte[1024];
 
             //wait for the ready message otherwise wait until enough persons joined in
             data = new DatagramPacket(buffer, buffer.length);
             if (clientinit.getSocket().isClosed() || stop) {
-                exit = true;
                 clientinit.getSocket().connect(clientinit.getServeraddress(), clientinit.getPort());
                 String sending = "stop";
                 buffer = sending.getBytes();
@@ -118,4 +117,3 @@ public class WaitingForReadyClient implements Runnable {
     }
 
 }
-//fuck this

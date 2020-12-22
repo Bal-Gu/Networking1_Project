@@ -1,6 +1,6 @@
 import java.io.IOException;
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;
+
 
 public class P2PReceptionThread implements Runnable {
     private final Clientinfo client;
@@ -81,4 +81,3 @@ public class P2PReceptionThread implements Runnable {
         }
     }
 }
-//fuck this

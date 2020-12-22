@@ -1,8 +1,6 @@
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -11,12 +9,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class P2P_Window extends JFrame {
-    private Clientinfo clientinfo;
-    private JTextField username;
-    private String TODELETE = "";
-    private JPanel leftPanel, MiddlePanel, RightPanel;
-    private JButton connectedButton;
-    private JScrollPane MessagePane, UsernamePane;
+    private final Clientinfo clientinfo;
+    private final JTextField username;
+    private final JPanel leftPanel;
+    private final JPanel MiddlePanel;
+    private final JPanel RightPanel;
+    private final JButton connectedButton;
+    private final JScrollPane MessagePane;
+    private final JScrollPane UsernamePane;
 
     public P2P_Window(Clientinfo clientinfo) {
         this.clientinfo = clientinfo;
@@ -117,13 +117,8 @@ public class P2P_Window extends JFrame {
         new Thread(thread).start();
 
         //create listener  for username changes
-        username.addActionListener(new ActionListener() {
-            //TODO restrict up to 25 and Change GUI Font to match the actual size
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                sendToPeers("/username " + username.getText());
-            }
-        });
+        //TODO restrict up to 25 and Change GUI Font to match the actual size
+        username.addActionListener(e -> sendToPeers("/username " + username.getText()));
 
         this.setVisible(true);
     }
@@ -143,16 +138,7 @@ public class P2P_Window extends JFrame {
         }
     }
 
-    public JPanel getRightPanel() {
-        return RightPanel;
-    }
 
-    public void changeUsername(String s) {
-        this.username.setText(s);
-        //send the messages to the peers
-        sendToPeers("/username " + s);
-
-    }
 
 
     public void connected() {
@@ -233,4 +219,3 @@ public class P2P_Window extends JFrame {
     //TODO add the usernames in a scrolling pane with the color of their respectiv connection
 
 }
-//fuck this

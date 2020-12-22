@@ -1,5 +1,4 @@
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.SocketException;
 
 public class TestP2P_Window {
@@ -15,6 +14,6 @@ public class TestP2P_Window {
             ci2.setConnected(Math.random() >= 0.5);
             ci.getPeers().add(ci2);
         }
-        P2P_Window win = new P2P_Window(ci);
+        new P2P_Window(ci);
     }
 }

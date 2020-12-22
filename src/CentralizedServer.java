@@ -6,14 +6,12 @@ import java.util.concurrent.Semaphore;
 
 public class CentralizedServer {
     private DatagramSocket socket;
-    private final int port = 2077;
-    private byte[] buffer = new byte[2048];
+    private final byte[] buffer = new byte[2048];
     private DatagramPacket packet;
-    private int clientammount = 0;
-    private ArrayList<Clientinfo> clientinfoList = new ArrayList<>();
-    private Semaphore s = new Semaphore(1);
+    private final ArrayList<Clientinfo> clientinfoList = new ArrayList<>();
+    private final Semaphore s = new Semaphore(1);
 
-    //fuck this
+
     public DatagramSocket getSocket() {
         return socket;
     }
@@ -29,22 +27,15 @@ public class CentralizedServer {
     public void start() throws IOException {
 
 
-        try {
-            socket = new DatagramSocket(port);
-        } catch (IOException e) {
-            throw (e);
-        }
+        int port = 2077;
+        socket = new DatagramSocket(port);
         while (true) {
-            try {
-                this.packet = new DatagramPacket(buffer, buffer.length);
-                socket.setSoTimeout(10000000);
-                socket.receive(packet);
-                Server_thread s = new Server_thread(this);
-                s.run();
+            this.packet = new DatagramPacket(buffer, buffer.length);
+            socket.setSoTimeout(10000000);
+            socket.receive(packet);
+            Server_thread s = new Server_thread(this);
+            s.run();
 
-            } catch (IOException e) {
-                throw (e);
-            }
         }
     }
 
