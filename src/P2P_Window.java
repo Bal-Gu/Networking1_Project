@@ -121,6 +121,24 @@ public class P2P_Window extends JFrame {
         this.setVisible(true);
     }
 
+    private void sendToPeers(String message) {
+        for (Clientinfo client : clientinfo.getPeers()) {
+            try {
+                clientinfo.getSocket().send(new DatagramPacket(
+                        message.getBytes(StandardCharsets.UTF_8),
+                        message.getBytes(StandardCharsets.UTF_8).length,
+                        client.getAddress(),
+                        client.getPort()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public JPanel getRightPanel() {
+        return RightPanel;
+    }
+
     public void changeUsername(String s) {
         this.username.setText(s);
         //send the messages to the peers
