@@ -1,16 +1,14 @@
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.net.UnknownHostException;
+import java.net.*;
 
 public class Clientinit {
-    private final DatagramSocket socket;
+    private DatagramSocket socket;
     private final Clientinfo c;
     private final int port = 2077;
+    private int port1 = 0;
     private final InetAddress serveraddress;
 
     public Clientinit() throws SocketException, UnknownHostException {
-        socket = new DatagramSocket();
+
         serveraddress = InetAddress.getByName("localhost");
         //Create Socket
         while (true) {
@@ -30,7 +28,7 @@ public class Clientinit {
         new ClientconnectWindow(this);
 
     }
-
+    //fuck this
     public DatagramSocket getSocket() {
         return socket;
     }
