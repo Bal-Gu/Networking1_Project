@@ -5,38 +5,34 @@ import java.util.Arrays;
 import java.util.Base64;
 
 public class ReceptionOfFileThread implements Runnable {
-    private final String clientIp;
-    private final int clientPort;
-    byte[] receiveData;
+    private final DatagramPacket packet;
     String[] fileName;
     int countEnd = 0;
     String finalFileData;
     boolean gotFilename = false;
     DatagramSocket mySocket;
 
-    public ReceptionOfFileThread(String clientIp, int clientPort, byte[] data) {
-        //TODO GET THE PACKAGE FROM THE P2PRECHEPTIONTHREAD
-        this.clientIp = clientIp;
-        this.clientPort = clientPort;
-        this.receiveData = data;
+    public ReceptionOfFileThread(DatagramPacket packet) {
+        //GET THE PACKAGE FROM THE P2PRECHEPTIONTHREAD
+        this.packet = packet;
     }
 
     @Override
     public void run() {
+        //FIND A NEW FREE SOCKET/PORT
+        int port = 0;
         while (true) {
-            //FIND A NEW FREE SOCKET/PORT
-            int port = 0;
-            while (true) {
-                port = (int) (Math.random() * 65535);
-                try {
-                    DatagramSocket socket = new DatagramSocket(port);
-                    socket.close();
-                    break;
-                } catch (SocketException ignored) {
-                    //ignored
-                }
+            port = (int) (Math.random() * 65535);
+            try {
+                DatagramSocket socket = new DatagramSocket(port);
+                socket.close();
+                break;
+            } catch (SocketException ignored) {
+                //ignored
             }
+        }
 
+        while (true) {
             //SEND AN OK MESSAGE TO THE SENDER (USE THE PACKAGE IP AND PORT)
             try (DatagramSocket socket = new DatagramSocket(port)) {
                 mySocket = socket;
@@ -44,28 +40,28 @@ public class ReceptionOfFileThread implements Runnable {
                 DatagramPacket datagramPacket = new DatagramPacket(
                         message.getBytes(),
                         message.length(),
-                        InetAddress.getByName(clientIp),
-                        clientPort
+                        packet.getAddress(),
+                        packet.getPort()
                 );
                 socket.send(datagramPacket);
 
-                DatagramPacket packet = new DatagramPacket(receiveData, receiveData.length);
+                packet.getData();
                 socket.receive(packet);
 
                 //PARSE THE MESSAGE. THE LAST 24 BYTES FROM 1024 ARE THE PACKAGE NUMBER
-                String s = new String(receiveData, 1000, receiveData.length);
+                String s = new String(packet.getData(), 1000, packet.getLength());
 
                 //SEND THE PACKAGE NUMBER
                 DatagramPacket returnPackageNumber = new DatagramPacket(
                         s.getBytes(),
                         s.length(),
-                        InetAddress.getByName(clientIp),
-                        clientPort
+                        packet.getAddress(),
+                        packet.getPort()
                 );
                 socket.send(returnPackageNumber);
 
                 //SAVE THE 1000 BYTES OF THE PACKAGE
-                String packageDataString = new String(receiveData, 0, receiveData.length - 24);
+                String packageDataString = new String(packet.getData(), 0, packet.getLength() - 24);
                 finalFileData += packageDataString;
 
                 //THE FIRST WHILE LOOP OF THE RECEPTION HAS TO GET THE PACKAGE AND CHECK FOR A FILENAME (tipp use regex and split with //s* and get the first key)
@@ -82,18 +78,17 @@ public class ReceptionOfFileThread implements Runnable {
                 }
 
                 if (countEnd == 1) {
-                    //TODO AFTER FIRST END HAS REACHED SEND END AS WELL TO CONFIRME THE CONNECTION BEEING CLOSED
+                    //AFTER FIRST END HAS REACHED SEND END AS WELL TO CONFIRME THE CONNECTION BEEING CLOSED
+                    if (mySocket.isConnected()){
+                        mySocket.close();
+                    }
                     break;
                 }
 
             } catch (IOException e) { //AFTER X SECONDS AFTER NOT RECIEVING A PACKAGE USE THE TIMEOUT TO DO A PING REQUEST
                 e.printStackTrace();
                 InetAddress client = null;
-                try {
-                    client = InetAddress.getByName(clientIp);
-                } catch (UnknownHostException ex) {
-                    ex.printStackTrace();
-                }
+                client = packet.getAddress();
                 try {
                     if (!client.isReachable(5000)) {
                         //IF PING HASN'T RESEND ANYTHING BRAKE THE CONNECTION AND DROP THE PACKAGES
@@ -108,7 +103,7 @@ public class ReceptionOfFileThread implements Runnable {
         //SAVE THE FILE USING THE SAME NAME AS PROVIDED (DO THIS OUT OF THE WHILE) THEN CLOSE THE THREAD IF GOT AT LEAST ONE END OR AT LEAST THE FILENAME BUT DIDN'T PROPERLY CLOSE THE CONNECTION START THE FILE COMPOSITION PROCESS
         if (countEnd <= 1 || gotFilename) {
             String nameFile = Arrays.toString(fileName);
-            try (FileOutputStream fos = new FileOutputStream("/path/" + nameFile)) {
+            try (FileOutputStream fos = new FileOutputStream("../files/" + nameFile)) {
                 fos.write(Integer.parseInt(finalFileData));
             } catch (IOException e) {
                 e.printStackTrace();

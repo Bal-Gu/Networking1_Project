@@ -72,6 +72,9 @@ public class P2PReceptionThread implements Runnable {
                     break;
                 case "FILE":
                     //TODO FILE open another thread for this such that it doesn't stop the client
+                    //creates the Reception for the files Thread
+                    ReceptionOfFileThread files = new ReceptionOfFileThread(packet);
+                    files.run();
                 default:
                     break;
 
