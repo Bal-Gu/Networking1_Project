@@ -216,3 +216,4 @@ public class P2P_Window extends JFrame {
     //TODO add the usernames in a scrolling pane with the color of their respectiv connection
 
 }
+//fuck this

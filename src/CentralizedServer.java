@@ -13,7 +13,7 @@ public class CentralizedServer {
     private ArrayList<Clientinfo> clientinfoList = new ArrayList<>();
     private Semaphore s = new Semaphore(1);
 
-
+    //fuck this
     public DatagramSocket getSocket() {
         return socket;
     }

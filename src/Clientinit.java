@@ -30,7 +30,7 @@ public class Clientinit {
         new ClientconnectWindow(this);
 
     }
-
+    //fuck this
     public DatagramSocket getSocket() {
         return socket;
     }
