@@ -15,4 +15,3 @@ public class Messages {
         return username;
     }
 }
-//fuck this

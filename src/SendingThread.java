@@ -196,4 +196,3 @@ public class SendingThread implements Runnable {
     }
 
 }
-//fuck this

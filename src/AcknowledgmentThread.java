@@ -1,7 +1,7 @@
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.SocketTimeoutException;
-//fuck this
+
 public class AcknowledgmentThread implements Runnable {
     private final SendingThread sendingThread;
     public boolean ending = false;

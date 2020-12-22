@@ -18,4 +18,3 @@ public class TestP2P_Window {
         P2P_Window win = new P2P_Window(ci);
     }
 }
-//fuck this
