@@ -5,6 +5,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class P2P_Window extends JFrame {
@@ -34,7 +37,7 @@ public class P2P_Window extends JFrame {
 
 
         RightPanel = new JPanel(new GridLayout(0, 1));
-        updateUsername(RightPanel);
+        updateUsername();
         UsernamePane = new JScrollPane(RightPanel);
         UsernamePane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         UsernamePane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -66,7 +69,7 @@ public class P2P_Window extends JFrame {
         c.gridwidth = 3;
         c.gridheight = 1;
         leftPanel.setLayout(gridleft);
-        this.username = new JLabel(clientinfo.getUsername());
+        this.username = new JTextField(clientinfo.getUsername());
         this.username.setFont(new Font(Font.MONOSPACED, Font.ITALIC, 50));
         leftPanel.add(username, c);
         username.setVisible(true);
