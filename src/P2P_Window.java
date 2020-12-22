@@ -129,6 +129,7 @@ public class P2P_Window extends JFrame {
     }
 
     private void sendToPeers(String message) {
+        //adding comment to wake git up
         for (Clientinfo client : clientinfo.getPeers()) {
             try {
                 clientinfo.getSocket().send(new DatagramPacket(
