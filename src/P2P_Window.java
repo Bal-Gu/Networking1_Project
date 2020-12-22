@@ -138,19 +138,6 @@ public class P2P_Window extends JFrame {
         }
     }
 
-    public JPanel getRightPanel() {
-        return RightPanel;
-    }
-
-    public void changeUsername(String s) {
-        this.username.setText(s);
-        //send the messages to the peers
-        sendToPeers("/username " + s);
-    }
-
-    public void actualisesUsernameList() {
-        //TODO add all usernames to the Pane. (Clear it bevor)
-    }
 
 
     public void connected() {
