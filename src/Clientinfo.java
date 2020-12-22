@@ -9,7 +9,7 @@ public class Clientinfo {
     private final InetAddress address;
     private final int port;
     private final ArrayList<Clientinfo> peers = new ArrayList<>();
-    private ArrayList<Messages> messages;
+    private ArrayList<Messages> messages = new ArrayList<>();
     private String username = "Give us your username";
     private DatagramSocket socket;
     private boolean connected = true;
@@ -151,6 +151,8 @@ public class Clientinfo {
     public void setUsername(String username) {
         this.username = username;
     }
+
+    public void addMessage(String Message){ messages.add(new Messages(username, Message)); }
 
     public InetAddress getAddress() {
         return address;
