@@ -6,8 +6,6 @@ import java.net.SocketException;
 public class ReceptionThreadMessage implements Runnable {
     private final DatagramPacket packet;
     private byte[] buffer;
-    private int acknowledgment;
-    private String keyword;
 
     public ReceptionThreadMessage(DatagramPacket packet, byte[] buffer) {
         this.packet = packet;
@@ -35,20 +33,19 @@ public class ReceptionThreadMessage implements Runnable {
         }
 
         while(true){
-            pack = new DatagramPacket(buffer, buffer.length, packet.getAddress(), packet.getPort());
+            pack = new DatagramPacket(buffer, buffer.length);
 
             String DataString = new String(pack.getData(), 0, pack.getLength());
 
-            if((keyword = DataString.split("\\s+")[0]).equals("END")){
+
+            if((DataString.split("\\s+")[0]).equals("END")){
                 break;
             }
 
-            byte[] buf = pack.getData();
-            byte[] newbufpack = new byte[1024];
+            String getNumber = new String(pack.getData(), 1000, pack.getLength());
 
-            for(int i = 1000; i < 1024; i++){
-                newbufpack[i] = buf[i];
-            }
+            byte[] newbufpack;
+            newbufpack = getNumber.getBytes();
 
             DatagramPacket newpack = new DatagramPacket(newbufpack, newbufpack.length, packet.getAddress(), packet.getPort());
 
