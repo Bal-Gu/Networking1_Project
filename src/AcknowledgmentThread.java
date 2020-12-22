@@ -18,7 +18,7 @@ public class AcknowledgmentThread implements Runnable {
         }
         while (!ending) {
             //set the received package to true
-            byte[] buffer = new byte[1024];  
+            byte[] buffer = new byte[1024];
 
             packet = new DatagramPacket(buffer, buffer.length);
             try {
@@ -88,6 +88,7 @@ public class AcknowledgmentThread implements Runnable {
                 e.printStackTrace();
             }
         }
+        //no connections should pass thus closing the Socket
         //no connections should pass thus closing the Socket
         sendingThread.getSocket().close();
     }
