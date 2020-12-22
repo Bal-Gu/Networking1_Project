@@ -8,7 +8,7 @@ import java.awt.event.WindowEvent;
 
 public class P2P_Window extends JFrame {
     private Clientinfo clientinfo;
-    private JLabel username;
+    private JTextField username;
     private JPanel leftPanel, MiddlePanel, RightPanel;
     private JButton connectedButton;
     private JScrollPane MessagePane, UsernamePane;
