@@ -4,7 +4,9 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class ReceptionOfFileThread implements Runnable {
     private final DatagramPacket packet;
@@ -13,6 +15,7 @@ public class ReceptionOfFileThread implements Runnable {
     String finalFileData;
     boolean gotFilename = false;
     DatagramSocket mySocket;
+    List<Packet> packetArray = new ArrayList<>();
 
     public ReceptionOfFileThread(DatagramPacket packet) {
         //GET THE PACKAGE FROM THE P2PRECHEPTIONTHREAD
@@ -52,7 +55,6 @@ public class ReceptionOfFileThread implements Runnable {
             //SEND AN OK MESSAGE TO THE SENDER (USE THE PACKAGE IP AND PORT)
             try {
 
-
                 datagramPacket = new DatagramPacket(
                         message.getBytes(),
                         message.length()
@@ -78,6 +80,9 @@ public class ReceptionOfFileThread implements Runnable {
 
                 //SAVE THE 1000 BYTES OF THE PACKAGE
                 String packageDataString = new String(packet.getData(), 0, packet.getLength() - 24);
+                byte[] dataFile = packet.getData();
+                dataFile = Arrays.copyOfRange(dataFile, 0, 999);
+                packetArray.add(new Packet(Integer.parseInt(s), dataFile));
 
 
                 //THE FIRST WHILE LOOP OF THE RECEPTION HAS TO GET THE PACKAGE AND CHECK FOR A FILENAME (tipp use regex and split with //s* and get the first key)
@@ -85,6 +90,7 @@ public class ReceptionOfFileThread implements Runnable {
                     //AFTER RECEPTION OF FILENAME SAVE IT AND WAIT FOR THE RECEPTION OF END
                     fileName = packageDataString.split("[\\w]+\\.[A-Za-z]{3,5}");
                     //TODO put this string in the client message. May have to find the right peer from the peer list. and get the client from the constructur.
+
                     gotFilename = true;
                 } else {
                     finalFileData.concat(packageDataString);
@@ -93,7 +99,6 @@ public class ReceptionOfFileThread implements Runnable {
                 //AFTER SECOND END OR TIMEOUT HAS BEEN RECIEVED CLOSE THE SOCKET CONNECTION
                 if (packageDataString.equals("END")) {
                     countEnd++;
-
                 }
 
                 if (countEnd == 1) {
@@ -128,7 +133,6 @@ public class ReceptionOfFileThread implements Runnable {
                 e.printStackTrace();
             }
         }
-
 
         System.out.println("File has been saved.");
     }
