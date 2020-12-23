@@ -16,10 +16,12 @@ public class ReceptionOfFileThread implements Runnable {
     boolean gotFilename = false;
     DatagramSocket mySocket;
     List<Packet> packetArray = new ArrayList<>();
+    private Clientinfo client;
 
-    public ReceptionOfFileThread(DatagramPacket packet) {
+    public ReceptionOfFileThread(DatagramPacket packet, Clientinfo client) {
         //GET THE PACKAGE FROM THE P2PRECHEPTIONTHREAD
         this.packet = packet;
+        this.client = client;
     }
 
     @Override
@@ -89,8 +91,9 @@ public class ReceptionOfFileThread implements Runnable {
                 if (packageDataString.matches("[\\w]+\\.[A-Za-z]{3,5}")) { //File Name with extension having 3 to 5 chars
                     //AFTER RECEPTION OF FILENAME SAVE IT AND WAIT FOR THE RECEPTION OF END
                     fileName = packageDataString.split("[\\w]+\\.[A-Za-z]{3,5}");
-                    //TODO put this string in the client message. May have to find the right peer from the peer list. and get the client from the constructur.
-
+                    //put this string in the client message. May have to find the right peer from the peer list. and get the client from the constructur.
+                    String clientMessage = packageDataString;
+                    client.addMessage(clientMessage);
                     gotFilename = true;
                 } else {
                     finalFileData.concat(packageDataString);
