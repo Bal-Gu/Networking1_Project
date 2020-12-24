@@ -13,7 +13,8 @@ public class Messages {
     }
 
     private void HTLMmessages(String message) {
-        String[] split = message.split("\\s+");
+        message =  message.replace("\n","<br>");
+        String[] split = message.split(" +");
         StringBuilder finalString = new StringBuilder();
         String tmpsafe = "";
         String tmp = "";

@@ -67,29 +67,35 @@ public class ReceptionOfFileThread implements Runnable {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
+                String s = "";
+                String packageDataString = "";
                 //PARSE THE MESSAGE. THE LAST 24 BYTES FROM 1024 ARE THE PACKAGE NUMBER
-                String s = new String(datagramPacket.getData(), 1000, datagramPacket.getLength() - 1000);
-                int sendingint = Integer.parseInt(s.replace("\0", ""));
-                s = sendingint + "";
-                //SEND THE PACKAGE NUMBER
-                DatagramPacket returnPackageNumber = new DatagramPacket(
-                        s.getBytes(),
-                        s.length(),
-                        packet.getAddress(),
-                        packet.getPort()
-                );
-                mySocket.send(returnPackageNumber);
+                if (datagramPacket.getLength() < 1000) {
+                    packageDataString = new String(datagramPacket.getData(), 0, datagramPacket.getLength());
+                } else {
+                    s = new String(datagramPacket.getData(), 1000, datagramPacket.getLength() - 1000);
 
-                //SAVE THE 1000 BYTES OF THE PACKAGE
-                String packageDataString = new String(datagramPacket.getData(), 0, datagramPacket.getLength() - 24);
-                byte[] dataFile = datagramPacket.getData();
-                dataFile = Arrays.copyOfRange(dataFile, 0, 999);
-                System.out.println(sendingint);
-                Packet p = new Packet(sendingint, dataFile);
-                if (!packetArray.contains(p)) {
-                    packetArray.add(p);
+                    int sendingint = Integer.parseInt(s.replace("\0", ""));
+                    s = sendingint + "";
+                    //SEND THE PACKAGE NUMBER
+                    DatagramPacket returnPackageNumber = new DatagramPacket(
+                            s.getBytes(),
+                            s.length(),
+                            packet.getAddress(),
+                            packet.getPort()
+                    );
+                    mySocket.send(returnPackageNumber);
+                    packageDataString = new String(datagramPacket.getData(), 0, datagramPacket.getLength() - 24);
+                    byte[] dataFile = datagramPacket.getData();
+                    dataFile = Arrays.copyOfRange(dataFile, 0, 999);
+                    System.out.println(sendingint);
+                    Packet p = new Packet(sendingint, dataFile);
+                    if (!packetArray.contains(p)) {
+                        packetArray.add(p);
+                    }
                 }
+                //SAVE THE 1000 BYTES OF THE PACKAGE
+
 
                 //THE FIRST WHILE LOOP OF THE RECEPTION HAS TO GET THE PACKAGE AND CHECK FOR A FILENAME (tipp use regex and split with //s* and get the first key)
                 if (packageDataString.matches("[\\w]+\\.[A-Za-z]{3,5}")) { //File Name with extension having 3 to 5 chars
