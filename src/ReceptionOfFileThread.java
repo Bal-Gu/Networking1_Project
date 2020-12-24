@@ -12,11 +12,11 @@ public class ReceptionOfFileThread implements Runnable {
     private final DatagramPacket packet;
     String[] fileName;
     int countEnd = 0;
-    String finalFileData;
+    String finalFileData = "";
     boolean gotFilename = false;
     DatagramSocket mySocket;
     List<Packet> packetArray = new ArrayList<>();
-    private Clientinfo client;
+    private final Clientinfo client;
 
     public ReceptionOfFileThread(DatagramPacket packet, Clientinfo client) {
         //GET THE PACKAGE FROM THE P2PRECHEPTIONTHREAD
@@ -56,10 +56,10 @@ public class ReceptionOfFileThread implements Runnable {
         while (true) {
             //SEND AN OK MESSAGE TO THE SENDER (USE THE PACKAGE IP AND PORT)
             try {
-
+                byte[] buffer = new byte[1024];
                 datagramPacket = new DatagramPacket(
-                        message.getBytes(),
-                        message.length()
+                        buffer,
+                        buffer.length
                 );
 
                 try {
@@ -69,7 +69,7 @@ public class ReceptionOfFileThread implements Runnable {
                 }
 
                 //PARSE THE MESSAGE. THE LAST 24 BYTES FROM 1024 ARE THE PACKAGE NUMBER
-                String s = new String(packet.getData(), 1000, packet.getLength() - 1000);
+                String s = new String(datagramPacket.getData(), 1000, datagramPacket.getLength() - 1000);
 
                 //SEND THE PACKAGE NUMBER
                 DatagramPacket returnPackageNumber = new DatagramPacket(
@@ -81,10 +81,10 @@ public class ReceptionOfFileThread implements Runnable {
                 mySocket.send(returnPackageNumber);
 
                 //SAVE THE 1000 BYTES OF THE PACKAGE
-                String packageDataString = new String(packet.getData(), 0, packet.getLength() - 24);
-                byte[] dataFile = packet.getData();
+                String packageDataString = new String(datagramPacket.getData(), 0, datagramPacket.getLength() - 24);
+                byte[] dataFile = datagramPacket.getData();
                 dataFile = Arrays.copyOfRange(dataFile, 0, 999);
-                packetArray.add(new Packet(Integer.parseInt(s), dataFile));
+                packetArray.add(new Packet(Integer.parseInt(s.replace("\0","")), dataFile));
 
 
                 //THE FIRST WHILE LOOP OF THE RECEPTION HAS TO GET THE PACKAGE AND CHECK FOR A FILENAME (tipp use regex and split with //s* and get the first key)
@@ -96,7 +96,7 @@ public class ReceptionOfFileThread implements Runnable {
                     client.getMessages().add(new Messages(client.searchpeers(packet.getAddress(),packet.getPort()).getUsername(),clientMessage));
                     gotFilename = true;
                 } else {
-                    finalFileData.concat(packageDataString);
+                    finalFileData =  finalFileData.concat(packageDataString);
                 }
 
                 //AFTER SECOND END OR TIMEOUT HAS BEEN RECIEVED CLOSE THE SOCKET CONNECTION

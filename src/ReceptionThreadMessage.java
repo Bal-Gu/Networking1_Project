@@ -79,14 +79,14 @@ public class ReceptionThreadMessage implements Runnable {
             }
 
             String getNumber = new String(newpack.getData(), 1000, newpack.getLength()-1000);
-            byte[] intbuff = getNumber.getBytes();
-            int sendnumber =Integer.parseInt(getNumber.split("\0")[0]);
+
+            int sendnumber =Integer.parseInt(getNumber.replace("\0",""));
             Packet p = new Packet(sendnumber, new String(newpack.getData(), 0, newpack.getLength()-24).getBytes());
             if(!packetsArray.contains(p)){
                 packetsArray.add(p);
             }
 
-            newpack = new DatagramPacket(intbuff, intbuff.length, packet.getAddress(), packet.getPort());
+            newpack = new DatagramPacket((""+sendnumber).getBytes(), (""+sendnumber).getBytes().length, packet.getAddress(), packet.getPort());
 
             try {
                 socket.send(newpack);
