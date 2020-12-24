@@ -2,14 +2,20 @@ import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EtchedBorder;
 import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.List;
 
 public class P2P_Window extends JFrame {
     private final Clientinfo clientinfo;
@@ -26,7 +32,7 @@ public class P2P_Window extends JFrame {
     public P2P_Window(Clientinfo clientinfo) {
         this.clientinfo = clientinfo;
 
-        this.setResizable(false);
+        this.setResizable(true);
         this.setSize(1920, 1080);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -47,9 +53,10 @@ public class P2P_Window extends JFrame {
         MessageArea.setOpaque(false);
         MessageArea.setRows(10);
         MessageArea.setColumns(10);
-        MessageArea.setBorder(new CompoundBorder(BorderFactory.createMatteBorder(5, 5, 5, 5, Color.GRAY),
-                BorderFactory.createMatteBorder(5, 5, 5, 5, Color.GRAY)));
+        MessageArea.setBorder(new CompoundBorder(BorderFactory.createMatteBorder(2, 2, 2, 2 , Color.GRAY),
+                BorderFactory.createMatteBorder(2, 2, 2, 2, Color.GRAY)));
         MessageArea.setPreferredSize(new Dimension(500,200));
+        MessageArea.setDragEnabled(true);
         MessagePanel = new JPanel(new BorderLayout());
         MessagePanel.add(MessageArea);
 
@@ -124,6 +131,31 @@ public class P2P_Window extends JFrame {
         c.weightx = 1;
         JButton send = new JButton("Send");
         leftPanel.add(send, c);
+
+        //drop and drag
+        MessageArea.setDropTarget(new DropTarget(){
+            public synchronized void drop(DropTargetDropEvent evt) {
+                try {
+                    evt.acceptDrop(DnDConstants.ACTION_COPY);
+                    java.util.List<File> droppedFiles;
+                    droppedFiles = (List<File>) evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+                    if(droppedFiles.size() > 1){
+                        JOptionPane.showMessageDialog(MessageArea, "Sorry...can't handle more than one files together.");
+                    }
+                    else{
+                        File droppedFile = droppedFiles.get(0);
+                        if(droppedFile.getName().matches("[\\w]+\\.[A-Za-z]{3,5}")){
+                            MessageArea.setText("File to be sended: " + droppedFile.getName());
+                        }
+                        else{
+                            JOptionPane.showMessageDialog(MessageArea, "Sorry...not a valid file. Make sure your filename has no spaces or special characters.");
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
 
         //sets the ButtonListener
