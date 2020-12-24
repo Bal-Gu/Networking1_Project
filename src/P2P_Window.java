@@ -42,7 +42,7 @@ public class P2P_Window extends JFrame {
         leftPanel = new JPanel();
         GridBagLayout gridleft = new GridBagLayout();
         MiddlePanel = new JPanel(new GridLayout(0, 1));
-        messagesUpdate(MiddlePanel);
+        messagesUpdate();
         MessagePane = new JScrollPane(MiddlePanel);
         MessagePane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         MessagePane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -247,9 +247,9 @@ public class P2P_Window extends JFrame {
         connected();
     }
 
-    public void messagesUpdate(JPanel p) {
+    public void messagesUpdate() {
 
-        p.setVisible(true);
+        MessagePanel.setVisible(true);
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.CENTER;
@@ -263,7 +263,7 @@ public class P2P_Window extends JFrame {
                     BorderFactory.createEmptyBorder(5, 5, 5, 5)
             ));
 
-            p.add(label, c);
+            MessagePanel.add(label, c);
         }
     }
 

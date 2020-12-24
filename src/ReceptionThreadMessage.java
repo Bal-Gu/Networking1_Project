@@ -7,15 +7,16 @@ import java.util.Collections;
 
 public class ReceptionThreadMessage implements Runnable {
     private final DatagramPacket packet;
-    private final byte[] buffer;
+    private final byte[] buffer = new byte[1024];
     private final ArrayList<Packet> packetsArray = new ArrayList<>();
     private final Clientinfo client;
+    private final P2P_Window window;
 
 
-    public ReceptionThreadMessage(DatagramPacket packet, byte[] buffer, Clientinfo client) {
+    public ReceptionThreadMessage(DatagramPacket packet, P2P_Window window, Clientinfo client) {
         this.packet = packet;
-        this.buffer = buffer;
         this.client = client;
+        this.window = window;
     }
 
     @Override
@@ -49,7 +50,8 @@ public class ReceptionThreadMessage implements Runnable {
             }
             String DataString = new String(newpack.getData(), 0, newpack.getLength());
 
-            if((DataString.split("\\s+")[0]).equals("END")){
+            if((DataString.equals("END"))){
+                System.out.println("Recieved END of Messages");
                 DataString = "END";
                 newbufpack = DataString.getBytes();
                 newpack = new DatagramPacket(newbufpack, newbufpack.length, packet.getAddress(), packet.getPort());
@@ -71,13 +73,13 @@ public class ReceptionThreadMessage implements Runnable {
                 String Message = Concatenation.toString();
 
                 client.addMessage(Message);
-
+                window.messagesUpdate();
                 break;
             }
 
             String getNumber = new String(newpack.getData(), 1000, newpack.getLength()-1000);
             byte[] intbuff = getNumber.getBytes();
-            int sendnumber = Integer.parseInt(getNumber);
+            int sendnumber =Integer.parseInt(getNumber.split("\0")[0]);
             Packet p = new Packet(sendnumber, new String(newpack.getData(), 0, newpack.getLength()-24).getBytes());
             if(!packetsArray.contains(p)){
                 packetsArray.add(p);
