@@ -45,7 +45,7 @@ public class AcknowledgmentThread implements Runnable {
             }
             //parses revived message
             String receive = new String(packet.getData(), 0, packet.getLength());
-            String keyword = receive.split("\\s*")[0];
+            String keyword = receive.replace("\0","");
             //END is received
             if ("END".equals(keyword)) {
                 //End result in a break an sending the rest to properly exit

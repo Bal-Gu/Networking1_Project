@@ -98,11 +98,11 @@ public class SendingThread implements Runnable {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            s.release();
             for (Packet p : packetsToSend) {
                 try {
                     s.acquire();
                 } catch (InterruptedException e) {
+
                     e.printStackTrace();
                 }
                 if (p.isRecieved()) {
@@ -124,23 +124,35 @@ public class SendingThread implements Runnable {
             }
         }
         if (!isMessage) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             sending = "FILENAME " + filename;
             buffer = sending.getBytes();
             DatagramPacket packetToSend = new DatagramPacket(buffer, buffer.length, packet.getAddress(), packet.getPort());
             try {
                 socket.send(packetToSend);
+                System.out.println("Sending filename");
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-        }
 
+        }
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         //Send END to the received port
         sending = "END";
         buffer = sending.getBytes();
         DatagramPacket packetToSend = new DatagramPacket(buffer, buffer.length, packet.getAddress(), packet.getPort());
         try {
             socket.send(packetToSend);
+            System.out.println("Sending END");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -166,9 +178,11 @@ public class SendingThread implements Runnable {
         s.acquire();
         for (Packet p : packetsToSend) {
             if (!p.isRecieved()) {
+                s.release();
                 return true;
             }
         }
+        s.release();
         return false;
     }
 

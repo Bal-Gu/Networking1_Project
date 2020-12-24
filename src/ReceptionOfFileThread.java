@@ -70,7 +70,8 @@ public class ReceptionOfFileThread implements Runnable {
 
                 //PARSE THE MESSAGE. THE LAST 24 BYTES FROM 1024 ARE THE PACKAGE NUMBER
                 String s = new String(datagramPacket.getData(), 1000, datagramPacket.getLength() - 1000);
-
+                int sendingint = Integer.parseInt(s.replace("\0", ""));
+                s = sendingint + "";
                 //SEND THE PACKAGE NUMBER
                 DatagramPacket returnPackageNumber = new DatagramPacket(
                         s.getBytes(),
@@ -84,8 +85,11 @@ public class ReceptionOfFileThread implements Runnable {
                 String packageDataString = new String(datagramPacket.getData(), 0, datagramPacket.getLength() - 24);
                 byte[] dataFile = datagramPacket.getData();
                 dataFile = Arrays.copyOfRange(dataFile, 0, 999);
-                packetArray.add(new Packet(Integer.parseInt(s.replace("\0","")), dataFile));
-
+                System.out.println(sendingint);
+                Packet p = new Packet(sendingint, dataFile);
+                if (!packetArray.contains(p)) {
+                    packetArray.add(p);
+                }
 
                 //THE FIRST WHILE LOOP OF THE RECEPTION HAS TO GET THE PACKAGE AND CHECK FOR A FILENAME (tipp use regex and split with //s* and get the first key)
                 if (packageDataString.matches("[\\w]+\\.[A-Za-z]{3,5}")) { //File Name with extension having 3 to 5 chars
@@ -93,10 +97,10 @@ public class ReceptionOfFileThread implements Runnable {
                     fileName = packageDataString.split("[\\w]+\\.[A-Za-z]{3,5}");
                     //put this string in the client message. May have to find the right peer from the peer list. and get the client from the constructur.
                     String clientMessage = packageDataString;
-                    client.getMessages().add(new Messages(client.searchpeers(packet.getAddress(),packet.getPort()).getUsername(),clientMessage));
+                    client.getMessages().add(new Messages(client.searchpeers(packet.getAddress(), packet.getPort()).getUsername(), clientMessage));
                     gotFilename = true;
                 } else {
-                    finalFileData =  finalFileData.concat(packageDataString);
+                    finalFileData = finalFileData.concat(packageDataString);
                 }
 
                 //AFTER SECOND END OR TIMEOUT HAS BEEN RECIEVED CLOSE THE SOCKET CONNECTION
@@ -114,7 +118,7 @@ public class ReceptionOfFileThread implements Runnable {
 
             } catch (IOException e) { //AFTER X SECONDS AFTER NOT RECIEVING A PACKAGE USE THE TIMEOUT TO DO A PING REQUEST
                 e.printStackTrace();
-                InetAddress client ;
+                InetAddress client;
                 client = packet.getAddress();
                 try {
                     if (!client.isReachable(5000)) {
