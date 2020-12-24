@@ -49,7 +49,7 @@ public class ReceptionThreadMessage implements Runnable {
                 e.printStackTrace();
             }
             String DataString = new String(newpack.getData(), 0, newpack.getLength());
-
+            DataString = DataString.replace("\0","");
             if((DataString.equals("END"))){
                 System.out.println("Recieved END of Messages");
                 DataString = "END";

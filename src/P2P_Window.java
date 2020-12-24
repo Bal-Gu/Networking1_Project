@@ -249,7 +249,7 @@ public class P2P_Window extends JFrame {
 
     public void messagesUpdate() {
 
-        MessagePanel.setVisible(true);
+        MiddlePanel.setVisible(true);
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.CENTER;
@@ -263,7 +263,7 @@ public class P2P_Window extends JFrame {
                     BorderFactory.createEmptyBorder(5, 5, 5, 5)
             ));
 
-            MessagePanel.add(label, c);
+            MiddlePanel.add(label, c);
         }
     }
 
