@@ -32,7 +32,7 @@ public class P2P_Window extends JFrame {
     public P2P_Window(Clientinfo clientinfo) {
         this.clientinfo = clientinfo;
 
-        this.setResizable(true);
+        this.setResizable(false);
         this.setSize(1920, 1080);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -176,7 +176,7 @@ public class P2P_Window extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 for (Clientinfo ignore : clientinfo.getPeers()) {
                     SendingThread s = new SendingThread(MessageArea.getText(), ignore);
-                    s.setUsername(username.getName());
+                    s.setUsername(clientinfo.getUsername());
                     new Thread(s).start();
                 }
                 MessageArea.setText("");
@@ -242,6 +242,18 @@ public class P2P_Window extends JFrame {
     }
 
     public void messagesUpdate() {
+
+        ArrayList<Component> toRemove = new ArrayList<>();
+        for (Component comp : MiddlePanel.getComponents()) {
+            if (comp instanceof JLabel) {
+                toRemove.add(comp);
+            }
+        }
+        //Removes Labels avoiding runtime error
+        for (Component comp : toRemove) {
+            MiddlePanel.remove(comp);
+        }
+
 
         MiddlePanel.setVisible(true);
         setLayout(new GridBagLayout());
