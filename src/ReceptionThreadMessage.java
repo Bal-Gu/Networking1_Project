@@ -3,12 +3,13 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class ReceptionThreadMessage implements Runnable {
     private final DatagramPacket packet;
-    private byte[] buffer;
-    private ArrayList<Packet> packetsArray = new ArrayList<>();
-    private Clientinfo client;
+    private final byte[] buffer;
+    private final ArrayList<Packet> packetsArray = new ArrayList<>();
+    private final Clientinfo client;
 
 
     public ReceptionThreadMessage(DatagramPacket packet, byte[] buffer, Clientinfo client) {
@@ -55,8 +56,8 @@ public class ReceptionThreadMessage implements Runnable {
                     e.printStackTrace();
                 }
 
-                StringBuffer Concatenation = new StringBuffer();
-
+                StringBuilder Concatenation = new StringBuilder();
+                Collections.sort(packetsArray);
                 for(Packet b : packetsArray){
                     newbufpack = b.getPacket();
                     DataString = new String(newbufpack, 0, newbufpack.length);
@@ -73,7 +74,10 @@ public class ReceptionThreadMessage implements Runnable {
             String getNumber = new String(pack.getData(), 1000, pack.getLength()-1000);
             newbufpack = getNumber.getBytes();
 
-            packetsArray.add(new Packet(Integer.parseInt(getNumber), new String(pack.getData(), 0, pack.getLength()-24).getBytes()));
+            Packet p = new Packet(Integer.parseInt(getNumber), new String(pack.getData(), 0, pack.getLength()-24).getBytes());
+            if(!packetsArray.contains(p)){
+                packetsArray.add(p);
+            }
 
             newpack = new DatagramPacket(newbufpack, newbufpack.length, packet.getAddress(), packet.getPort());
 
