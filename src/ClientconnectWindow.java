@@ -59,19 +59,23 @@ public class ClientconnectWindow extends JFrame {
 
         b.addActionListener(e -> {
 
-            cl.getC().setUsername(textArea.getText().replace("\n", " "));
-            byte[] buffer;
-            try {
-                String sending = "join " + cl.getC().getUsername();
-                buffer = sending.getBytes();
-                DatagramPacket data = new DatagramPacket(buffer, buffer.length, cl.getServeraddress(), cl.getPort());
-                cl.getSocket().send(data);
-                b.setText("Welcome " + cl.getC().getUsername());
-                WaitingForReadyClient wfrc1 = new WaitingForReadyClient(ClientconnectWindow.this, cl);
-                new Thread(wfrc1).start();
+            if(textArea.getText().length() <= 25){
+                cl.getC().setUsername(textArea.getText().replace("\n", " "));
+                byte[] buffer;
+                try {
+                    String sending = "join " + cl.getC().getUsername();
+                    buffer = sending.getBytes();
+                    DatagramPacket data = new DatagramPacket(buffer, buffer.length, cl.getServeraddress(), cl.getPort());
+                    cl.getSocket().send(data);
+                    b.setText("Welcome " + cl.getC().getUsername());
+                    WaitingForReadyClient wfrc1 = new WaitingForReadyClient(ClientconnectWindow.this, cl);
+                    new Thread(wfrc1).start();
 
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+            }else{
+                textArea.setText("name <= 25 char");
             }
         });
     }
