@@ -204,6 +204,8 @@ public class P2P_Window extends JFrame {
 
 
         this.setVisible(true);
+        
+        MessageArea.requestFocus();
     }
 
     private void sendToPeers(String message) {
