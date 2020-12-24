@@ -23,8 +23,8 @@ public class ReceptionThreadMessage implements Runnable {
 
         DatagramSocket socket;
         while (true) {
-            try (DatagramSocket randSock = new DatagramSocket((int) (Math.random() * 65536))) {
-                socket = randSock;
+            try  {
+                socket = new DatagramSocket((int) (Math.random() * 65536));
                 break;
             } catch (SocketException ignored) {
             }
@@ -39,11 +39,15 @@ public class ReceptionThreadMessage implements Runnable {
         }
 
         while(true){
-            pack = new DatagramPacket(buffer, buffer.length);
-            DatagramPacket newpack;
-            byte[] newbufpack;
-            String DataString = new String(pack.getData(), 0, pack.getLength());
+            byte[] newbufpack = new byte[1024];
+            DatagramPacket newpack = new DatagramPacket(newbufpack, newbufpack.length);
 
+            try {
+                socket.receive(newpack);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            String DataString = new String(newpack.getData(), 0, newpack.getLength());
 
             if((DataString.split("\\s+")[0]).equals("END")){
                 DataString = "END";
@@ -71,15 +75,15 @@ public class ReceptionThreadMessage implements Runnable {
                 break;
             }
 
-            String getNumber = new String(pack.getData(), 1000, pack.getLength()-1000);
-            newbufpack = getNumber.getBytes();
+            String getNumber = new String(newpack.getData(), 1000, newpack.getLength()-1000);
+            byte[] intbuff = getNumber.getBytes();
 
-            Packet p = new Packet(Integer.parseInt(getNumber), new String(pack.getData(), 0, pack.getLength()-24).getBytes());
+            Packet p = new Packet(Integer.parseInt(getNumber), new String(newpack.getData(), 0, newpack.getLength()-24).getBytes());
             if(!packetsArray.contains(p)){
                 packetsArray.add(p);
             }
 
-            newpack = new DatagramPacket(newbufpack, newbufpack.length, packet.getAddress(), packet.getPort());
+            newpack = new DatagramPacket(intbuff, intbuff.length, packet.getAddress(), packet.getPort());
 
             try {
                 socket.send(newpack);

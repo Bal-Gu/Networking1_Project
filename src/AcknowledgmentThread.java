@@ -17,6 +17,9 @@ public class AcknowledgmentThread implements Runnable {
             return;
         }
         while (!ending) {
+            if(sendingThread.getSocket().isClosed()){
+                return;
+            }
             //set the received package to true
             byte[] buffer = new byte[1024];
 
