@@ -185,7 +185,7 @@ public class SendingThread implements Runnable {
         for (int i = 0; i <= b.length / 1000; i++) {
 
             byte[] buf = new byte[1024];
-            byte[] max1000buff = Arrays.copyOfRange(b, i * 1000, (int) Math.min((long) (i + 1) * 1000 - 1, b.length - 1));
+            byte[] max1000buff = Arrays.copyOfRange(b, i * 1000, (int) Math.min((long) (i + 1) * 1000, b.length));
             System.arraycopy(max1000buff, 0, buf, 0, max1000buff.length);
             byte[] intbyte = Integer.toString(i).getBytes();
             int count = 0;
