@@ -145,7 +145,10 @@ public class P2P_Window extends JFrame {
                     else{
                         File droppedFile = droppedFiles.get(0);
                         if(droppedFile.getName().matches("[\\w]+\\.[A-Za-z]{3,5}")){
-                            MessageArea.setText("File to be sended: " + droppedFile.getName());
+                            JOptionPane.showMessageDialog(MessageArea, "File is being send: " + droppedFile.getName());
+                            for(Clientinfo client : clientinfo.getPeers()){
+                                new Thread(new SendingThread(droppedFile, client)).start();
+                            }
                         }
                         else{
                             JOptionPane.showMessageDialog(MessageArea, "Sorry...not a valid file. Make sure your filename has no spaces or special characters.");
