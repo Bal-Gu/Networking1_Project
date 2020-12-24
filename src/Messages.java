@@ -3,6 +3,7 @@ public class Messages {
     private String message = "";
 
     public Messages(String username, String message) {
+        message = message.replace("\0","");
         if (message.length() > 103) {
             HTLMmessages(message);
         } else {
@@ -25,6 +26,9 @@ public class Messages {
                 tmp = "";
                 finalString.append(tmpsafe).append("<br>");
                 index--;
+                if(index <= -1){
+                    break;
+                }
             }
             index++;
         }

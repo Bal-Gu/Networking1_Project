@@ -16,6 +16,7 @@ public class SendingThread implements Runnable {
     private boolean emergencyExit = false;
     private final Clientinfo clientinfo;
     private final String filename;
+    private String username = "";
 
     public SendingThread(String message, Clientinfo Tosendclientinfo) {
 
@@ -33,6 +34,10 @@ public class SendingThread implements Runnable {
         this.isMessage = false;
         this.filename = file.getName();
         FileToPackets(file);
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public void earlyExit() {
@@ -54,7 +59,7 @@ public class SendingThread implements Runnable {
         //Send new port to the given client
         byte[] buffer;
 
-        String sending = isMessage ? "MESSAGE" : "FILE";
+        String sending = isMessage ? "MESSAGE" + " " + username  : "FILE";
         buffer = sending.getBytes();
         long start = System.currentTimeMillis();
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length, clientinfo.getAddress(), clientinfo.getPort());
@@ -111,6 +116,11 @@ public class SendingThread implements Runnable {
                     }
                 }
                 s.release();
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
         if (!isMessage) {
@@ -122,11 +132,7 @@ public class SendingThread implements Runnable {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+
         }
 
         //Send END to the received port

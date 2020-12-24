@@ -53,7 +53,7 @@ public class Clientinfo {
             return null;
         }
         int index = 0;
-        while (peers.get(index) != null) {
+        for(Clientinfo peer : peers) {
             if (peers.get(index).equals(tempClient)) {
                 return peers.get(index);
             }
@@ -156,7 +156,6 @@ public class Clientinfo {
         this.username = username;
     }
 
-    public void addMessage(String Message){ messages.add(new Messages(username, Message)); }
 
     public InetAddress getAddress() {
         return address;

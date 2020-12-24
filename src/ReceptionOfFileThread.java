@@ -93,7 +93,7 @@ public class ReceptionOfFileThread implements Runnable {
                     fileName = packageDataString.split("[\\w]+\\.[A-Za-z]{3,5}");
                     //put this string in the client message. May have to find the right peer from the peer list. and get the client from the constructur.
                     String clientMessage = packageDataString;
-                    client.addMessage(clientMessage);
+                    client.getMessages().add(new Messages(client.searchpeers(packet.getAddress(),packet.getPort()).getUsername(),clientMessage));
                     gotFilename = true;
                 } else {
                     finalFileData.concat(packageDataString);

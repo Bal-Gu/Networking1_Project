@@ -11,12 +11,13 @@ public class ReceptionThreadMessage implements Runnable {
     private final ArrayList<Packet> packetsArray = new ArrayList<>();
     private final Clientinfo client;
     private final P2P_Window window;
+    private  final  String  username;
 
-
-    public ReceptionThreadMessage(DatagramPacket packet, P2P_Window window, Clientinfo client) {
+    public ReceptionThreadMessage(DatagramPacket packet, P2P_Window window, Clientinfo client,String username) {
         this.packet = packet;
         this.client = client;
         this.window = window;
+        this.username = username;
     }
 
     @Override
@@ -72,7 +73,7 @@ public class ReceptionThreadMessage implements Runnable {
 
                 String Message = Concatenation.toString();
 
-                client.addMessage(Message);
+                client.getMessages().add(new Messages(username,Message));
                 window.messagesUpdate();
                 break;
             }

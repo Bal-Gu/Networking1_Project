@@ -53,9 +53,9 @@ public class P2P_Window extends JFrame {
         MessageArea.setOpaque(false);
         MessageArea.setRows(10);
         MessageArea.setColumns(10);
-        MessageArea.setBorder(new CompoundBorder(BorderFactory.createMatteBorder(2, 2, 2, 2 , Color.GRAY),
+        MessageArea.setBorder(new CompoundBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.GRAY),
                 BorderFactory.createMatteBorder(2, 2, 2, 2, Color.GRAY)));
-        MessageArea.setPreferredSize(new Dimension(500,200));
+        MessageArea.setPreferredSize(new Dimension(500, 200));
         MessageArea.setDragEnabled(true);
         MessagePanel = new JPanel(new BorderLayout());
         MessagePanel.add(MessageArea);
@@ -93,7 +93,7 @@ public class P2P_Window extends JFrame {
         c.gridy = 2;
         c.weighty = 0.2;
         c.fill = GridBagConstraints.BOTH;
-        this.add(MessagePanel,c);
+        this.add(MessagePanel, c);
 
 
         //Set's the username
@@ -123,7 +123,6 @@ public class P2P_Window extends JFrame {
         connected();
 
 
-
         c.gridx = 1;
         c.gridy = 2;
         c.gridwidth = 1;
@@ -133,24 +132,22 @@ public class P2P_Window extends JFrame {
         leftPanel.add(send, c);
 
         //drop and drag
-        MessageArea.setDropTarget(new DropTarget(){
+        MessageArea.setDropTarget(new DropTarget() {
             public synchronized void drop(DropTargetDropEvent evt) {
                 try {
                     evt.acceptDrop(DnDConstants.ACTION_COPY);
                     java.util.List<File> droppedFiles;
                     droppedFiles = (List<File>) evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
-                    if(droppedFiles.size() > 1){
+                    if (droppedFiles.size() > 1) {
                         JOptionPane.showMessageDialog(MessageArea, "Sorry...can't handle more than one files together.");
-                    }
-                    else{
+                    } else {
                         File droppedFile = droppedFiles.get(0);
-                        if(droppedFile.getName().matches("[\\w]+\\.[A-Za-z]{3,5}")){
+                        if (droppedFile.getName().matches("[\\w]+\\.[A-Za-z]{3,5}")) {
                             JOptionPane.showMessageDialog(MessageArea, "File is being send: " + droppedFile.getName());
-                            for(Clientinfo client : clientinfo.getPeers()){
+                            for (Clientinfo client : clientinfo.getPeers()) {
                                 new Thread(new SendingThread(droppedFile, client)).start();
                             }
-                        }
-                        else{
+                        } else {
                             JOptionPane.showMessageDialog(MessageArea, "Sorry...not a valid file. Make sure your filename has no spaces or special characters.");
                         }
                     }
@@ -177,8 +174,10 @@ public class P2P_Window extends JFrame {
         send.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                for(Clientinfo ignore : clientinfo.getPeers()){
-                new Thread(new SendingThread(MessageArea.getText(),ignore)).start();
+                for (Clientinfo ignore : clientinfo.getPeers()) {
+                    SendingThread s = new SendingThread(MessageArea.getText(), ignore);
+                    s.setUsername(username.getName());
+                    new Thread(s).start();
                 }
                 MessageArea.setText("");
             }
@@ -194,8 +193,6 @@ public class P2P_Window extends JFrame {
         });
 
 
-
-
         //creates the ReceptionThread
 
         P2PReceptionThread thread = new P2PReceptionThread(this, clientinfo);
@@ -204,7 +201,6 @@ public class P2P_Window extends JFrame {
         //create listener  for username changes
         //TODO restrict up to 25 and Change GUI Font to match the actual size
         username.addActionListener(e -> sendToPeers("/username " + username.getText()));
-
 
 
         this.setVisible(true);
@@ -224,8 +220,6 @@ public class P2P_Window extends JFrame {
             }
         }
     }
-
-
 
 
     public void connected() {
@@ -254,9 +248,9 @@ public class P2P_Window extends JFrame {
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.CENTER;
         int counter = 0;
-        for (Messages m:clientinfo.getMessages()) {
+        for (Messages m : clientinfo.getMessages()) {
             c.gridx = counter;
-            JLabel label = new JLabel("<html>"+m.getMessage() + "<br><br>" + m.getUsername()+"</html>");
+            JLabel label = new JLabel("<html>" + m.getMessage() + "<br><br>" + m.getUsername() + "</html>");
             counter++;
             label.setBorder(new CompoundBorder( // sets two borders
                     BorderFactory.createMatteBorder(5, 5, 5, 5, Color.GRAY), // outer border
