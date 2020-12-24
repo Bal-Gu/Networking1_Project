@@ -1,13 +1,16 @@
 import java.io.IOException;
 import java.net.DatagramPacket;
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 
 public class AcknowledgmentThread implements Runnable {
     private final SendingThread sendingThread;
     public boolean ending = false;
-
-    public AcknowledgmentThread(SendingThread sendingThread) {
+    private  final InetAddress address;
+    public AcknowledgmentThread(SendingThread sendingThread, InetAddress address) {
         this.sendingThread = sendingThread;
+        this.address = address;
     }
 
     @Override
@@ -29,7 +32,7 @@ public class AcknowledgmentThread implements Runnable {
                     //receives package
                     sendingThread.getSocket().receive(packet);
                 } catch (SocketTimeoutException e) {
-                    if (packet.getAddress().isReachable(sendingThread.getSocket().getSoTimeout())) {
+                    if (address.isReachable(sendingThread.getSocket().getSoTimeout())) {
                         //client isn't dead
                         continue;
                     } else {

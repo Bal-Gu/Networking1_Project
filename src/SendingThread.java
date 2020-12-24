@@ -78,7 +78,7 @@ public class SendingThread implements Runnable {
         }
 
         //Start new listening thread
-        AcknowledgmentThread acknowledgmentThread = new AcknowledgmentThread(this);
+        AcknowledgmentThread acknowledgmentThread = new AcknowledgmentThread(this,clientinfo.getAddress());
         new Thread(acknowledgmentThread).start();
 
         //While not all packets are marked as received send each packet.
