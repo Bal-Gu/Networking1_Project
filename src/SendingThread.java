@@ -43,8 +43,8 @@ public class SendingThread implements Runnable {
     public void run() {
         //Create Socket
         while (true) {
-            try (DatagramSocket socket2 = new DatagramSocket((int) (Math.random() * 65535))) {
-                socket = socket2;
+            try {
+                socket = new DatagramSocket((int) (Math.random() * 65535));
                 break;
 
             } catch (SocketException ignored) {
@@ -179,10 +179,10 @@ public class SendingThread implements Runnable {
 
             byte[] buf = new byte[1024];
             byte[] max1000buff = Arrays.copyOfRange(b, i * 1000, (int) Math.min((long) (i + 1) * 1000 - 1, b.length - 1));
-            System.arraycopy(max1000buff, 0, buf, 0, buf.length);
+            System.arraycopy(max1000buff, 0, buf, 0, max1000buff.length);
             byte[] intbyte = Integer.toString(i).getBytes();
             int count = 0;
-            for (int j = 23 - intbyte.length; j < 24; j++) {
+            for (int j = 24 - intbyte.length; j < 24; j++) {
                 buf[i + 1000] = intbyte[count];
                 count++;
             }
