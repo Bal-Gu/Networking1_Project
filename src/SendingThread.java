@@ -17,8 +17,8 @@ public class SendingThread implements Runnable {
     private final Clientinfo clientinfo;
     private final String filename;
 
-    public SendingThread(String message, DatagramSocket socket, Clientinfo Tosendclientinfo) {
-        this.socket = socket;
+    public SendingThread(String message, Clientinfo Tosendclientinfo) {
+
         this.clientinfo = Tosendclientinfo;
         this.isMessage = true;
         this.filename = "";
@@ -27,7 +27,7 @@ public class SendingThread implements Runnable {
 
     }
 
-    public SendingThread(File file, DatagramSocket socket, Clientinfo Tosendclientinfo) throws IOException {
+    public SendingThread(File file, Clientinfo Tosendclientinfo) throws IOException {
         this.socket = socket;
         this.clientinfo = Tosendclientinfo;
         this.isMessage = false;

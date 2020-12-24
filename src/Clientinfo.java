@@ -9,7 +9,7 @@ public class Clientinfo {
     private final InetAddress address;
     private final int port;
     private final ArrayList<Clientinfo> peers = new ArrayList<>();
-    private ArrayList<Messages> messages = new ArrayList<>();
+    private final ArrayList<Messages> messages =  new ArrayList<>();
     private String username = "Give us your username";
     private DatagramSocket socket;
     private boolean connected = true;
@@ -32,6 +32,10 @@ public class Clientinfo {
 
     public void setSocket(DatagramSocket socket) {
         this.socket = socket;
+    }
+
+    public ArrayList<Messages> getMessages() {
+        return messages;
     }
 
     public DatagramSocket getSocket() {

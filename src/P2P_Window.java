@@ -2,6 +2,8 @@ import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EtchedBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -73,7 +75,7 @@ public class P2P_Window extends JFrame {
         c.gridx = 1;
         c.gridheight = 1;
         this.add(MessagePane, c);
-        c.gridheight = 3;
+        c.gridheight = 2;
         c.weightx = 0.5;
         c.gridx = 2;
         this.add(UsernamePane, c);
@@ -106,12 +108,22 @@ public class P2P_Window extends JFrame {
         c.gridx = 1;
         c.gridy = 1;
         c.gridwidth = 1;
-        c.gridheight = 2;
+        c.gridheight = 1;
         c.weightx = 1;
         connectedButton = new JButton("Connected");
         leftPanel.add(connectedButton, c);
         connectedButton.setVisible(true);
         connected();
+
+
+
+        c.gridx = 1;
+        c.gridy = 2;
+        c.gridwidth = 1;
+        c.gridheight = 1;
+        c.weightx = 1;
+        JButton send = new JButton("Send");
+        leftPanel.add(send, c);
 
 
         //sets the ButtonListener
@@ -126,6 +138,17 @@ public class P2P_Window extends JFrame {
             }
         });
 
+        //sets the SendingListener
+        send.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                for(Clientinfo ignore : clientinfo.getPeers()){
+                new Thread(new SendingThread(MessageArea.getText(),ignore)).start();
+                }
+                MessageArea.setText("");
+            }
+        });
+
         //In case the user press the exit button
         this.addWindowListener(new WindowAdapter() {
             @Override
@@ -134,6 +157,9 @@ public class P2P_Window extends JFrame {
                 super.windowClosed(e);
             }
         });
+
+
+
 
         //creates the ReceptionThread
 
@@ -192,9 +218,11 @@ public class P2P_Window extends JFrame {
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.CENTER;
-        for (int i = 0; i < 100; i++) {
-            c.gridx = i;
-            JLabel label = new JLabel("Label " + i);
+        int counter = 0;
+        for (Messages m:clientinfo.getMessages()) {
+            c.gridx = counter;
+            JLabel label = new JLabel("<html>"+m.getMessage() + "<br><br>" + m.getUsername()+"</html>");
+            counter++;
             label.setBorder(new CompoundBorder( // sets two borders
                     BorderFactory.createMatteBorder(5, 5, 5, 5, Color.GRAY), // outer border
                     BorderFactory.createEmptyBorder(5, 5, 5, 5)
