@@ -77,8 +77,8 @@ public class ReceptionThreadMessage implements Runnable {
 
             String getNumber = new String(newpack.getData(), 1000, newpack.getLength()-1000);
             byte[] intbuff = getNumber.getBytes();
-
-            Packet p = new Packet(Integer.parseInt(getNumber), new String(newpack.getData(), 0, newpack.getLength()-24).getBytes());
+            int sendnumber = Integer.parseInt(getNumber);
+            Packet p = new Packet(sendnumber, new String(newpack.getData(), 0, newpack.getLength()-24).getBytes());
             if(!packetsArray.contains(p)){
                 packetsArray.add(p);
             }
