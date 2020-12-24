@@ -41,7 +41,9 @@ public class P2PReceptionThread implements Runnable {
                         for (int i = 1; i < recieve.split("\\s+").length; i++) {
                             peerName.append(recieve.split("\\s+")[i]).append(" ");
                         }
-                        peer.setUsername(peerName.toString());
+                        if(peerName.toString().length() <= 25){
+                            peer.setUsername(peerName.toString());
+                        }
                         window.updateUsername();
                     }
                     break;
