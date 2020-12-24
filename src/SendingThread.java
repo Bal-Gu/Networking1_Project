@@ -28,7 +28,7 @@ public class SendingThread implements Runnable {
     }
 
     public SendingThread(File file, Clientinfo Tosendclientinfo) throws IOException {
-        this.socket = socket;
+
         this.clientinfo = Tosendclientinfo;
         this.isMessage = false;
         this.filename = file.getName();
