@@ -1,27 +1,31 @@
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class ReceptionOfFileThread implements Runnable {
     private final DatagramPacket packet;
-    String[] fileName;
+    private final String username;
+    String fileName;
     int countEnd = 0;
-    String finalFileData = "";
     boolean gotFilename = false;
     DatagramSocket mySocket;
     List<Packet> packetArray = new ArrayList<>();
     private final Clientinfo client;
 
-    public ReceptionOfFileThread(DatagramPacket packet, Clientinfo client) {
+    public ReceptionOfFileThread(DatagramPacket packet, Clientinfo client,String username) {
         //GET THE PACKAGE FROM THE P2PRECHEPTIONTHREAD
         this.packet = packet;
         this.client = client;
+        this.username = username;
     }
 
     @Override
@@ -87,7 +91,7 @@ public class ReceptionOfFileThread implements Runnable {
                     mySocket.send(returnPackageNumber);
                     packageDataString = new String(datagramPacket.getData(), 0, datagramPacket.getLength() - 24);
                     byte[] dataFile = datagramPacket.getData();
-                    dataFile = Arrays.copyOfRange(dataFile, 0, 999);
+                    dataFile = Arrays.copyOfRange(dataFile, 0, 1000);
                     System.out.println(sendingint);
                     Packet p = new Packet(sendingint, dataFile);
                     if (!packetArray.contains(p)) {
@@ -98,15 +102,12 @@ public class ReceptionOfFileThread implements Runnable {
 
 
                 //THE FIRST WHILE LOOP OF THE RECEPTION HAS TO GET THE PACKAGE AND CHECK FOR A FILENAME (tipp use regex and split with //s* and get the first key)
-                if (packageDataString.matches("[\\w]+\\.[A-Za-z]{3,5}")) { //File Name with extension having 3 to 5 chars
+                if (packageDataString.split("\\s+")[0].equals("FILENAME")) { //File Name with extension having 3 to 5 chars
                     //AFTER RECEPTION OF FILENAME SAVE IT AND WAIT FOR THE RECEPTION OF END
-                    fileName = packageDataString.split("[\\w]+\\.[A-Za-z]{3,5}");
+                    fileName = packageDataString.split("\\s+")[1];
                     //put this string in the client message. May have to find the right peer from the peer list. and get the client from the constructur.
-                    String clientMessage = packageDataString;
-                    client.getMessages().add(new Messages(client.searchpeers(packet.getAddress(), packet.getPort()).getUsername(), clientMessage));
+                    client.getMessages().add(new Messages(username , fileName));
                     gotFilename = true;
-                } else {
-                    finalFileData = finalFileData.concat(packageDataString);
                 }
 
                 //AFTER SECOND END OR TIMEOUT HAS BEEN RECIEVED CLOSE THE SOCKET CONNECTION
@@ -139,9 +140,28 @@ public class ReceptionOfFileThread implements Runnable {
         }
         //SAVE THE FILE USING THE SAME NAME AS PROVIDED (DO THIS OUT OF THE WHILE) THEN CLOSE THE THREAD IF GOT AT LEAST ONE END OR AT LEAST THE FILENAME BUT DIDN'T PROPERLY CLOSE THE CONNECTION START THE FILE COMPOSITION PROCESS
         if (countEnd <= 1 || gotFilename) {
-            String nameFile = Arrays.toString(fileName);
-            try (FileOutputStream fos = new FileOutputStream("../files/" + nameFile)) {
-                fos.write(Integer.parseInt(finalFileData));
+            System.out.println(fileName);
+            //filebuffer creation
+            ArrayList<Byte> bytes = new ArrayList<>();
+            //sorting the collection in the right order
+            Collections.sort(packetArray);
+            int totallength = 0;
+            //getting the total length of the packets
+            for(Packet p : packetArray){
+                totallength += p.getPacket().length;
+            }
+            //appending each packet
+            ByteBuffer buffer = ByteBuffer.wrap(new byte[totallength]);
+            for(Packet p : packetArray){
+                buffer.put(p.getPacket());
+            }
+            //checking if the file exist
+            File f = new File(System.getProperty("user.dir")+"/files/" + fileName);
+            if(f.exists()){
+                return;
+            }
+            try (FileOutputStream fos = new FileOutputStream(System.getProperty("user.dir")+"/files/" + fileName)) {
+                fos.write(buffer.array());
             } catch (IOException e) {
                 e.printStackTrace();
             }

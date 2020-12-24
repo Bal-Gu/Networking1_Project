@@ -65,10 +65,11 @@ public class AcknowledgmentThread implements Runnable {
             for (int i = 0; i < 5; i++) {
                 String sending = "FILENAME " + sendingThread.getFilename();
                 byte[] buffer = sending.getBytes();
-                DatagramPacket packetToSend = new DatagramPacket(buffer, buffer.length, packet.getAddress(), packet.getPort());
+
                 try {
+                    DatagramPacket packetToSend = new DatagramPacket(buffer, buffer.length, packet.getAddress(), packet.getPort());
                     sendingThread.getSocket().send(packetToSend);
-                } catch (IOException ignore) {
+                } catch (IOException | IllegalArgumentException ignore ) {
 
                 }
                 try {
@@ -82,10 +83,11 @@ public class AcknowledgmentThread implements Runnable {
         for (int i = 0; i < 5; i++) {
             String sending = "END";
             byte[] buffer = sending.getBytes();
-            DatagramPacket packetToSend = new DatagramPacket(buffer, buffer.length, packet.getAddress(), packet.getPort());
+
             try {
+                DatagramPacket packetToSend = new DatagramPacket(buffer, buffer.length, packet.getAddress(), packet.getPort());
                 sendingThread.getSocket().send(packetToSend);
-            } catch (IOException ignore) {
+            } catch (IOException | IllegalArgumentException ignore) {
                 //ignores potential Sockets being already closed
             }
             try {

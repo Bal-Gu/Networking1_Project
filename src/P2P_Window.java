@@ -140,12 +140,18 @@ public class P2P_Window extends JFrame {
                     droppedFiles = (List<File>) evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
                     if (droppedFiles.size() > 1) {
                         JOptionPane.showMessageDialog(MessageArea, "Sorry...can't handle more than one files together.");
-                    } else {
+                    }
+                    else if(!clientinfo.isConnected()){
+                        JOptionPane.showMessageDialog(MessageArea, "You must be connected sorry");
+                    }
+                    else {
                         File droppedFile = droppedFiles.get(0);
                         if (droppedFile.getName().matches("[\\w]+\\.[A-Za-z]{3,5}")) {
                             JOptionPane.showMessageDialog(MessageArea, "File is being send: " + droppedFile.getName());
                             for (Clientinfo client : clientinfo.getPeers()) {
-                                new Thread(new SendingThread(droppedFile, client)).start();
+                                SendingThread s = new SendingThread(droppedFile, client);
+                                s.setUsername(clientinfo.getUsername());
+                                new Thread(s).start();
                             }
                         } else {
                             JOptionPane.showMessageDialog(MessageArea, "Sorry...not a valid file. Make sure your filename has no spaces or special characters.");
@@ -171,16 +177,16 @@ public class P2P_Window extends JFrame {
         });
 
         //sets the SendingListener
-        send.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                for (Clientinfo ignore : clientinfo.getPeers()) {
-                    SendingThread s = new SendingThread(MessageArea.getText(), ignore);
-                    s.setUsername(clientinfo.getUsername());
-                    new Thread(s).start();
-                }
-                MessageArea.setText("");
+        send.addActionListener(e -> {
+            if(!clientinfo.isConnected()){
+                return;
             }
+            for (Clientinfo ignore : clientinfo.getPeers()) {
+                SendingThread s = new SendingThread(MessageArea.getText(), ignore);
+                s.setUsername(clientinfo.getUsername());
+                new Thread(s).start();
+            }
+            MessageArea.setText("");
         });
 
         //In case the user press the exit button
@@ -223,6 +229,7 @@ public class P2P_Window extends JFrame {
 
 
     public void connected() {
+        this.clientinfo.setConnected(true);
         connectedButton.setBackground(new Color(11, 102, 35));
         connectedButton.setText("Connected");
         connectedButton.setForeground(new Color(255, 255, 255));
@@ -232,6 +239,7 @@ public class P2P_Window extends JFrame {
     }
 
     public void disconnect() {
+        this.clientinfo.setConnected(false);
         connectedButton.setBackground(new Color(128, 0, 0));
         connectedButton.setText("Disconnected");
         connectedButton.repaint();

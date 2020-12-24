@@ -46,6 +46,9 @@ public class SendingThread implements Runnable {
 
     @Override
     public void run() {
+        if(!clientinfo.isConnected()){
+            return;
+        }
         //Create Socket
         while (true) {
             try {
@@ -59,7 +62,7 @@ public class SendingThread implements Runnable {
         //Send new port to the given client
         byte[] buffer;
 
-        String sending = isMessage ? "MESSAGE" + " " + username  : "FILE";
+        String sending = isMessage ? ("MESSAGE" + " " + username)  : ("FILE"+ " " + username);
         buffer = sending.getBytes();
         long start = System.currentTimeMillis();
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length, clientinfo.getAddress(), clientinfo.getPort());
@@ -117,7 +120,7 @@ public class SendingThread implements Runnable {
                 }
                 s.release();
                 try {
-                    Thread.sleep(10);
+                    Thread.sleep(1);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
