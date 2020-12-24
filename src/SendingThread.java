@@ -190,7 +190,7 @@ public class SendingThread implements Runnable {
             byte[] intbyte = Integer.toString(i).getBytes();
             int count = 0;
             for (int j = 24 - intbyte.length; j < 24; j++) {
-                buf[i + 1000] = intbyte[count];
+                buf[j + 1000] = intbyte[count];
                 count++;
             }
             packetsToSend.add(new Packet(i, buf));
