@@ -140,6 +140,12 @@ public class ReceptionOfFileThread implements Runnable {
         }
         //SAVE THE FILE USING THE SAME NAME AS PROVIDED (DO THIS OUT OF THE WHILE) THEN CLOSE THE THREAD IF GOT AT LEAST ONE END OR AT LEAST THE FILENAME BUT DIDN'T PROPERLY CLOSE THE CONNECTION START THE FILE COMPOSITION PROCESS
         if (countEnd <= 1 || gotFilename) {
+            File directory = new File(System.getProperty("user.dir")+"/files");
+            if (! directory.exists()){
+                if(!directory.mkdir()){
+                    return;
+                }
+            }
             System.out.println(fileName);
             //filebuffer creation
             ArrayList<Byte> bytes = new ArrayList<>();
