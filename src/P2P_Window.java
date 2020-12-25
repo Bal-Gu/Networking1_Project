@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-public class P2P_Window extends JFrame {
+public class P2P_Window extends JFrame implements ActionListener{
     private final Clientinfo clientinfo;
     private final JTextField username;
     private final JPanel leftPanel;
@@ -28,6 +28,8 @@ public class P2P_Window extends JFrame {
     private final JButton connectedButton;
     private final JScrollPane MessagePane;
     private final JScrollPane UsernamePane;
+    
+    private String safeSave = "";
 
     public P2P_Window(Clientinfo clientinfo) {
         this.clientinfo = clientinfo;
@@ -213,6 +215,7 @@ public class P2P_Window extends JFrame {
         this.setVisible(true);
         
         MessageArea.requestFocus();
+        username.addActionListener(this::actionPerformed);
     }
 
     private void sendToPeers(String message) {
@@ -317,6 +320,18 @@ public class P2P_Window extends JFrame {
         RightPanel.revalidate();
         RightPanel.repaint();
 
+    }
+    
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if(username.getText().length()<=25 && username.getText().length()>=1) {
+            username.setFont(new Font(Font.MONOSPACED, Font.ITALIC, 66 - (username.getText().length() * 2)));
+            leftPanel.revalidate();
+            leftPanel.repaint();
+            safeSave = username.getText();
+        }else{
+            username.setText(safeSave);
+        }
     }
     //TODO make a message actualiser that will update the scrolling pane
     //TODO make a textarea with a keylistener for enter that will send the message.
