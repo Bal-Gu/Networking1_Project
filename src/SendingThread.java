@@ -62,7 +62,7 @@ public class SendingThread implements Runnable {
         //Send new port to the given client
         byte[] buffer;
 
-        String sending = isMessage ? ("MESSAGE" + " " + username)  : ("FILE"+ " " + username);
+        String sending = isMessage ? ("MESSAGE" + "  " + username)  : ("FILE"+ "  " + username);
         buffer = sending.getBytes();
         long start = System.currentTimeMillis();
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length, clientinfo.getAddress(), clientinfo.getPort());

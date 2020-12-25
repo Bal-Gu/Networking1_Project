@@ -111,6 +111,7 @@ public class WaitingForReadyClient implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        clientconnectWindow.dispose();
         new P2P_Window(clientinit.getC());
 
 

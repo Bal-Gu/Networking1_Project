@@ -17,7 +17,7 @@ public class ClientconnectWindow extends JFrame {
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setResizable(false);
         this.setSize(400, 400);
-        readyb.setBounds(0, 0, 400, 100);//TODO FIX THIS
+        readyb.setBounds(0, 0, 400, 100);
         b.setBounds(this.getWidth() / 2 - this.getWidth() / 8, this.getHeight() / 2 - this.getHeight() / 16, this.getWidth() / 4, this.getHeight() / 8);//TODO make it bigger
         textArea.setBounds(this.getWidth() / 2 - this.getWidth() / 8, this.getHeight() / 2 + this.getHeight() / 16, this.getWidth() / 4, this.getHeight() / 8);
         this.add(b);
@@ -38,6 +38,7 @@ public class ClientconnectWindow extends JFrame {
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
+
         });
         this.addWindowListener(new WindowAdapter() {
             @Override

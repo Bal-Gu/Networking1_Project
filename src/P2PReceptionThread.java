@@ -68,16 +68,17 @@ public class P2PReceptionThread implements Runnable {
                     }
                     break;
                 case "MESSAGE":
-                    ReceptionThreadMessage message = new ReceptionThreadMessage(packet, window, client,recieve.split("\\s+")[1]);
+                    ReceptionThreadMessage message = new ReceptionThreadMessage(packet, window, client,recieve.split("\\s{2}")[1]);
                     new Thread(message).start();
 
-                    //TODO MESSAGE add message to the messages list and actualise the P2P_Window
+                    //MESSAGE add message to the messages list and actualise the P2P_Window
                     break;
                 case "FILE":
-                    //TODO FILE open another thread for this such that it doesn't stop the client
+                    // FILE open another thread for this such that it doesn't stop the client
                     //creates the Reception for the files Thread
-                    ReceptionOfFileThread files = new ReceptionOfFileThread(packet, client, recieve.split("\\s+")[1]);
+                    ReceptionOfFileThread files = new ReceptionOfFileThread(packet, client, recieve.split("\\s{2}")[1]);
                     new Thread(files).start();
+                    window.messagesUpdate();
                 default:
                     break;
 

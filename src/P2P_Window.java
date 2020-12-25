@@ -181,8 +181,9 @@ public class P2P_Window extends JFrame {
             if(!clientinfo.isConnected()){
                 return;
             }
+            System.out.println(MessageArea.getText());
             for (Clientinfo ignore : clientinfo.getPeers()) {
-                SendingThread s = new SendingThread(MessageArea.getText(), ignore);
+                SendingThread s = new SendingThread(MessageArea.getText().replace("\r\n", "\n"), ignore);
                 s.setUsername(clientinfo.getUsername());
                 new Thread(s).start();
             }
@@ -266,19 +267,22 @@ public class P2P_Window extends JFrame {
 
 
         MiddlePanel.setVisible(true);
-        setLayout(new GridBagLayout());
+        MiddlePanel.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
-        c.fill = GridBagConstraints.CENTER;
+        c.gridwidth = 3;
+        c.weightx = 1;
+        c.fill = GridBagConstraints.BOTH;
+        c.gridwidth = GridBagConstraints.REMAINDER;
         int counter = 0;
         for (Messages m : clientinfo.getMessages()) {
-            c.gridx = counter;
+            c.gridy = counter;
             JLabel label = new JLabel("<html>" + m.getMessage() + "<br><br>" + m.getUsername() + "</html>");
             counter++;
             label.setBorder(new CompoundBorder( // sets two borders
                     BorderFactory.createMatteBorder(5, 5, 5, 5, Color.GRAY), // outer border
                     BorderFactory.createEmptyBorder(5, 5, 5, 5)
             ));
-
+            c.weighty = 1.0-(1.0/m.getMessage().length());
             MiddlePanel.add(label, c);
         }
     }
