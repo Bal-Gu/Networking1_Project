@@ -13,6 +13,15 @@ public class Clientinfo {
     private String username = "Give us your username";
     private DatagramSocket socket;
     private boolean connected = true;
+    private boolean listenMode = false;
+
+    public boolean isListenMode() {
+        return listenMode;
+    }
+
+    public void setListenMode(boolean listenMode) {
+        this.listenMode = listenMode;
+    }
 
     public boolean isConnected() {
         return connected;

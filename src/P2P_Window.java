@@ -192,7 +192,12 @@ public class P2P_Window extends JFrame implements ActionListener {
                 disconnect();
                 sendToPeers("STOP");
 
-            } else {
+            }
+            else if(connectedButton.getText().equals("Listen Mode")){
+                reconnected();
+                sendToPeers("RECONNECTION");
+            }
+            else {
                 reconnected();
                 sendToPeers("RECONNECTION");
             }
@@ -203,7 +208,15 @@ public class P2P_Window extends JFrame implements ActionListener {
             if (!clientinfo.isConnected()) {
                 return;
             }
-            System.out.println(MessageArea.getText());
+            if(MessageArea.getText().equalsIgnoreCase("STOP")){
+                sendToPeers("MESSAGE STOP");
+                MessageArea.setText("");
+                for(Clientinfo client: clientinfo.getPeers()){
+                    client.setListenMode(true);
+                }
+                updateUsername();
+                return;
+            }
             for (Clientinfo ignore : clientinfo.getPeers()) {
                 SendingThread s = new SendingThread(MessageArea.getText().replace("\r\n", "\n"), ignore);
                 s.setUsername(clientinfo.getUsername());
@@ -334,7 +347,7 @@ public class P2P_Window extends JFrame implements ActionListener {
 
             JLabel label = new JLabel(clientinfo.getPeers().get(i).getUsername());
             label.setFont(new Font(Font.MONOSPACED, Font.ITALIC, 30));
-            label.setForeground(clientinfo.getPeers().get(i).isConnected() ? new Color(11, 102, 35) : new Color(128, 0, 0));
+            label.setForeground(clientinfo.getPeers().get(i).isConnected() ? (clientinfo.getPeers().get(i).isListenMode() ? new Color(249,224,118 ): new Color(11, 102, 35) ): new Color(128, 0, 0));
 
 
             RightPanel.add(label);
@@ -357,4 +370,15 @@ public class P2P_Window extends JFrame implements ActionListener {
     }
 
 
+    public void listenMode(Clientinfo peers) {
+        this.connectedButton.setText("Listen Mode");
+        this.connectedButton.setBackground(new Color(236,151,6));
+        for(Clientinfo Client:clientinfo.getPeers()){
+            Client.setListenMode(!Client.getUsername().equals(peers.getUsername()));
+        }
+        connectedButton.revalidate();
+        connectedButton.repaint();
+        updateUsername();
+
+    }
 }

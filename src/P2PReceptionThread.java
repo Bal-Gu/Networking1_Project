@@ -32,8 +32,15 @@ public class P2PReceptionThread implements Runnable {
             String recieve = new String(packet.getData(), 0, packet.getLength());
             System.out.println("Recieved " + recieve);
             String keyword = recieve.split("\\s+")[0];
+            if(recieve.split("\\s+").length == 2 && recieve.split("\\s+")[1].toUpperCase().equals("STOP")){
+                keyword = "MESSAGE STOP";
+            }
             Clientinfo peer;
             switch (keyword) {
+                case "MESSAGE STOP":
+                    client.setListenMode(true);
+                    window.listenMode(client.searchpeers(packet.getAddress(),packet.getPort()));
+                    break;
                 case "/username":
                     peer = client.searchpeers(packet.getAddress(), packet.getPort());
                     if (peer != null) {
@@ -63,6 +70,8 @@ public class P2PReceptionThread implements Runnable {
                 case "RECONNECTION":
                     peer = client.searchpeers(packet.getAddress(), packet.getPort());
                     if (peer != null) {
+                        System.out.println("Reconnection got");
+                        peer.setListenMode(false);
                         peer.setConnected(true);
                         window.updateUsername();
                     }
