@@ -205,6 +205,10 @@ public class P2P_Window extends JFrame implements ActionListener {
 
         //sets the SendingListener
         send.addActionListener(e -> {
+            if(clientinfo.isListenMode()){
+                JOptionPane.showMessageDialog(MessageArea, "You are in listening mode");
+                return;
+            }
             if (!clientinfo.isConnected()) {
                 return;
             }
