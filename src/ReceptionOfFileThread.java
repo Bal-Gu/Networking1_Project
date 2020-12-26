@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -168,11 +169,12 @@ public class ReceptionOfFileThread implements Runnable {
             }
             try (FileOutputStream fos = new FileOutputStream(System.getProperty("user.dir")+"/files/" + fileName)) {
                 fos.write(buffer.array());
+                JOptionPane.showMessageDialog(null, "You got an new file. It has been saved in the " + System.getProperty("user.dir") + "/files/");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-
         System.out.println("File has been saved.");
     }
+
 }
