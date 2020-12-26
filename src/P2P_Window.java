@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-public class P2P_Window extends JFrame implements ActionListener{
+public class P2P_Window extends JFrame implements ActionListener {
     private final Clientinfo clientinfo;
     private final JTextField username;
     private final JPanel leftPanel;
@@ -28,7 +28,7 @@ public class P2P_Window extends JFrame implements ActionListener{
     private final JButton connectedButton;
     private final JScrollPane MessagePane;
     private final JScrollPane UsernamePane;
-    
+
     private String safeSave = "";
 
     public P2P_Window(Clientinfo clientinfo) {
@@ -142,19 +142,39 @@ public class P2P_Window extends JFrame implements ActionListener{
                     droppedFiles = (List<File>) evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
                     if (droppedFiles.size() > 1) {
                         JOptionPane.showMessageDialog(MessageArea, "Sorry...can't handle more than one files together.");
-                    }
-                    else if(!clientinfo.isConnected()){
+                    } else if (!clientinfo.isConnected()) {
                         JOptionPane.showMessageDialog(MessageArea, "You must be connected sorry");
-                    }
-                    else {
+                    } else {
                         File droppedFile = droppedFiles.get(0);
                         if (droppedFile.getName().matches("[\\w]+\\.[A-Za-z]{3,5}")) {
-                            JOptionPane.showMessageDialog(MessageArea, "File is being send: " + droppedFile.getName());
+
+                            ArrayList<Object> possiblies = new ArrayList<>();
                             for (Clientinfo client : clientinfo.getPeers()) {
-                                SendingThread s = new SendingThread(droppedFile, client);
+                                possiblies.add(client.getUsername());
+                            }
+                            String username = (String) JOptionPane.showInputDialog(MessageArea, "which peer do you want",
+                                    "Peer chose", JOptionPane.PLAIN_MESSAGE, null,
+                                    possiblies.toArray(),
+                                    (String) possiblies.get(0));
+
+                            if ((username != null) && (username.length() > 0)) {
+                                Clientinfo toSendTo = null;
+                                for (Clientinfo client : clientinfo.getPeers()) {
+                                    if(username.equals(client.getUsername())){
+                                        toSendTo = client;
+                                        break;
+                                    }
+                                }
+                                if(toSendTo == null){
+                                    return;
+                                }
+                                SendingThread s = new SendingThread(droppedFile, toSendTo);
                                 s.setUsername(clientinfo.getUsername());
                                 new Thread(s).start();
+                                JOptionPane.showMessageDialog(MessageArea, "File is being send: " + droppedFile.getName());
                             }
+
+
                         } else {
                             JOptionPane.showMessageDialog(MessageArea, "Sorry...not a valid file. Make sure your filename has no spaces or special characters.");
                         }
@@ -180,7 +200,7 @@ public class P2P_Window extends JFrame implements ActionListener{
 
         //sets the SendingListener
         send.addActionListener(e -> {
-            if(!clientinfo.isConnected()){
+            if (!clientinfo.isConnected()) {
                 return;
             }
             System.out.println(MessageArea.getText());
@@ -213,7 +233,7 @@ public class P2P_Window extends JFrame implements ActionListener{
 
 
         this.setVisible(true);
-        
+
         MessageArea.requestFocus();
         username.addActionListener(this::actionPerformed);
     }
@@ -285,7 +305,7 @@ public class P2P_Window extends JFrame implements ActionListener{
                     BorderFactory.createMatteBorder(5, 5, 5, 5, Color.GRAY), // outer border
                     BorderFactory.createEmptyBorder(5, 5, 5, 5)
             ));
-            c.weighty = 1.0-(1.0/m.getMessage().length());
+            c.weighty = 1.0 - (1.0 / m.getMessage().length());
             MiddlePanel.add(label, c);
         }
     }
@@ -321,25 +341,18 @@ public class P2P_Window extends JFrame implements ActionListener{
         RightPanel.repaint();
 
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(username.getText().length()<=25 && username.getText().length()>=1) {
+        if (username.getText().length() <= 25 && username.getText().length() >= 1) {
             username.setFont(new Font(Font.MONOSPACED, Font.ITALIC, 66 - (username.getText().length() * 2)));
             leftPanel.revalidate();
             leftPanel.repaint();
             safeSave = username.getText();
-        }else{
+        } else {
             username.setText(safeSave);
         }
     }
-    //TODO make a message actualiser that will update the scrolling pane
-    //TODO make a textarea with a keylistener for enter that will send the message.
-    //TODO keylistener should then send the message  to all the peers.
-    //TODO text area should also allow for drag and drop
-    //TODO methode that actualises the name on the right scrolling pane
-    //TODO methode that actualises the clients connection button.
-    //TODO add closing listener that will send /quit to each peers
-    //TODO add the usernames in a scrolling pane with the color of their respectiv connection
+
 
 }
