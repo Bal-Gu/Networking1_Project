@@ -229,11 +229,13 @@ public class P2P_Window extends JFrame implements ActionListener {
 
         //create listener  for username changes
         //TODO restrict up to 25 and Change GUI Font to match the actual size
-        username.addActionListener(e -> sendToPeers("/username " + username.getText()));
-
+        username.addActionListener(
+                e -> {
+                    clientinfo.setUsername(username.getText());
+                    sendToPeers("/username " + username.getText());
+                });
 
         this.setVisible(true);
-
         MessageArea.requestFocus();
         username.addActionListener(this::actionPerformed);
     }
