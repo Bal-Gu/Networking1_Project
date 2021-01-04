@@ -146,7 +146,7 @@ public class P2P_Window extends JFrame implements ActionListener {
                         JOptionPane.showMessageDialog(MessageArea, "You must be connected sorry");
                     } else {
                         File droppedFile = droppedFiles.get(0);
-                        if (droppedFile.getName().matches("[\\w]+\\.[A-Za-z]{3,5}")) {
+                        if (droppedFile.getName().matches("[\\w]+\\.[A-Za-z0-9]{1,5}$")) {
 
                             ArrayList<Object> possiblies = new ArrayList<>();
                             for (Clientinfo client : clientinfo.getPeers()) {
