@@ -103,7 +103,7 @@ public class ReceptionOfFileThread implements Runnable {
 
 
                 //THE FIRST WHILE LOOP OF THE RECEPTION HAS TO GET THE PACKAGE AND CHECK FOR A FILENAME (tipp use regex and split with //s* and get the first key)
-                if (packageDataString.split("\\s+")[0].equals("FILENAME")) { //File Name with extension having 3 to 5 chars
+                if (packageDataString.split("\\s+").length > 0 && packageDataString.split("\\s+")[0].equals("FILENAME")) { //File Name with extension having 3 to 5 chars
                     //AFTER RECEPTION OF FILENAME SAVE IT AND WAIT FOR THE RECEPTION OF END
                     fileName = packageDataString.split("\\s+")[1];
                     //put this string in the client message. May have to find the right peer from the peer list. and get the client from the constructur.
