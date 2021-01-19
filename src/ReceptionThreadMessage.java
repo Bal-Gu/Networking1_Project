@@ -13,6 +13,7 @@ public class ReceptionThreadMessage implements Runnable {
     private final P2P_Window window;
     private  final  String  username;
 
+
     public ReceptionThreadMessage(DatagramPacket packet, P2P_Window window, Clientinfo client,String username) {
         this.packet = packet;
         this.client = client;

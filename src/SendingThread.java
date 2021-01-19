@@ -17,6 +17,7 @@ public class SendingThread implements Runnable {
     private final Clientinfo clientinfo;
     private final String filename;
     private String username = "";
+    private int counter = 0;
 
     public SendingThread(String message, Clientinfo Tosendclientinfo) {
 
@@ -125,6 +126,7 @@ public class SendingThread implements Runnable {
                     e.printStackTrace();
                 }
             }
+            System.out.println("Confirmation "+counter +"/ "+packetsToSend.size());
         }
         if (!isMessage) {
             try {
@@ -173,6 +175,9 @@ public class SendingThread implements Runnable {
 
     public void remove(int index) throws InterruptedException {
         s.acquire();
+        if(!packetsToSend.get(index).isRecieved()){
+            counter++;
+        }
         packetsToSend.get(index).setRecieved(true);
         s.release();
     }
