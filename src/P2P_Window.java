@@ -275,6 +275,7 @@ public class P2P_Window extends JFrame implements ActionListener {
 
     public void connected() {
         this.clientinfo.setConnected(true);
+        this.clientinfo.setListenMode(false);
         connectedButton.setBackground(new Color(11, 102, 35));
         connectedButton.setText("Connected");
         connectedButton.setForeground(new Color(255, 255, 255));
